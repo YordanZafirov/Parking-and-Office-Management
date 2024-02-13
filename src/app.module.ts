@@ -7,4 +7,4 @@ import { IsUniqueConstraint } from './utils/decorators/unique/validator';
   controllers: [],
   providers: [IsUniqueConstraint],
 })
-export class AppModule { }
+export class AppModule {}
