@@ -7,6 +7,8 @@ import { promisify } from 'util';
 import { randomBytes, scrypt as _scrypt } from 'crypto';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
+import { SignInDto } from 'src/user/dto/sign-in.dto';
+import { CreateUserDto } from 'src/user/dto/create-user.dto';
 
 const scrypt = promisify(_scrypt);
 
@@ -17,10 +19,11 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signIn(username: string, password: string) {
-    const user = await this.userService.findByUsername(username);
+  async signIn(signInDto: SignInDto) {
+    const { email, password } = signInDto;
+    const user = await this.userService.findOneByEmail(email);
     if (!user) {
-      throw new NotFoundException('user not found');
+      throw new NotFoundException('User not found');
     }
 
     const [salt, storedHash] = user.password.split('.');
@@ -30,10 +33,9 @@ export class AuthService {
     if (storedHash !== hash.toString('hex')) {
       throw new BadRequestException('bad password');
     }
-    const payload = { sub: user.id, username: user.username, role: user.role };
+    const payload = { sub: user.id, email: user.email, role: user.role };
     const partialUser = {
       id: user.id,
-      username: user.username,
       email: user.email,
       role: user.role,
     };
@@ -43,15 +45,12 @@ export class AuthService {
     };
   }
 
-  async signup(email: string, username: string, password: string) {
+  async signup(createUserDto: CreateUserDto) {
+    const { email, password } = createUserDto;
     // See if email is in use
-    const userByEmail = await this.userService.findByEmail(email);
+    const userByEmail = await this.userService.findOneByEmail(email);
     if (userByEmail) {
       throw new BadRequestException('email in use');
-    }
-    const userByUsername = await this.userService.findByUsername(username);
-    if (userByUsername) {
-      throw new BadRequestException('username in use');
     }
     // Hash the users password
     // Generate a salt
@@ -64,10 +63,10 @@ export class AuthService {
     const result = salt + '.' + hash.toString('hex');
 
     // Create a new user and save it
-    const user = await this.userService.create(email, username, result);
+    const user = await this.userService.create({ email, password: result });
 
     // return the user
     const { id, created, updated, deleted } = user;
-    return { id, username, email, created, updated, deleted };
+    return { id, email, created, updated, deleted };
   }
 }
