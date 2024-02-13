@@ -5,6 +5,8 @@ import {
 } from '@nestjs/common';
 import { promisify } from 'util';
 import { randomBytes, scrypt as _scrypt } from 'crypto';
+import { UserService } from 'src/user/user.service';
+import { JwtService } from '@nestjs/jwt';
 
 const scrypt = promisify(_scrypt);
 

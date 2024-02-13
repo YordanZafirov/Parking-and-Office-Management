@@ -10,6 +10,7 @@ import { AuthGuard } from './utils/guards/auth.guard';
 import { AuthModule } from './auth/auth.module';
 import { SpotTypeModule } from './spot-type/spot-type.module';
 import { SchemaTypeModule } from './schema-type/schema-type.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { SchemaTypeModule } from './schema-type/schema-type.module';
     AuthModule,
     SpotTypeModule,
     SchemaTypeModule,
+    UserModule,
   ],
   controllers: [],
   providers: [
