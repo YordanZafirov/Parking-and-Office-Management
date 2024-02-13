@@ -13,6 +13,7 @@ import { AuthService } from 'src/auth/auth.service';
 import { Public } from 'src/utils/decorators/public/public.decorator';
 import { UserRoles } from './user-role.enum';
 import { SignInDto } from './dto/sign-in.dto';
+import { Roles } from 'src/utils/decorators/role/roles.decorator';
 
 @Controller('user')
 export class UserController {
