@@ -8,6 +8,8 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthGuard } from './utils/guards/auth.guard';
 import { AuthModule } from './auth/auth.module';
+import { SpotTypeModule } from './spot-type/spot-type.module';
+import { SchemaTypeModule } from './schema-type/schema-type.module';
 
 @Module({
   imports: [
@@ -15,6 +17,8 @@ import { AuthModule } from './auth/auth.module';
     ConfigModule.forRoot(),
     UniqueModule,
     AuthModule,
+    SpotTypeModule,
+    SchemaTypeModule,
   ],
   controllers: [],
   providers: [
