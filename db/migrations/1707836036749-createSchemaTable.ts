@@ -57,7 +57,7 @@ export class CreateSchemaTable1707836036749 implements MigrationInterface {
     );
 
     await queryRunner.createForeignKey(
-      'shema',
+      'schema',
       new TableForeignKey({
         columnNames: ['location_id'],
         referencedColumnNames: ['id'],
@@ -66,11 +66,11 @@ export class CreateSchemaTable1707836036749 implements MigrationInterface {
     );
 
     await queryRunner.createForeignKey(
-      'shema',
+      'schema',
       new TableForeignKey({
-        columnNames: ['shema_type_id'],
+        columnNames: ['schema_type_id'],
         referencedColumnNames: ['id'],
-        referencedTableName: 'shema_type',
+        referencedTableName: 'schema_type',
       }),
     );
   }
