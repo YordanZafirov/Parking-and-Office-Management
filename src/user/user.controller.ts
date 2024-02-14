@@ -6,6 +6,7 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
+  Patch,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -14,6 +15,7 @@ import { Public } from 'src/utils/decorators/public/public.decorator';
 import { UserRoles } from './user-role.enum';
 import { SignInDto } from './dto/sign-in.dto';
 import { Roles } from 'src/utils/decorators/role/roles.decorator';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('user')
 export class UserController {
@@ -44,10 +46,13 @@ export class UserController {
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.userService.findOneById(id);
   }
-  // @Patch(':id')
-  // async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-  //   return this.userService.update(+id, updateUserDto);
-  // }
+  @Patch(':id')
+  async update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return this.authService.changePassword(id, updateUserDto);
+  }
 
   @Roles(UserRoles.ADMIN)
   @Delete(':id')

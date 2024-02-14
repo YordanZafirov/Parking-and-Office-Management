@@ -9,6 +9,7 @@ import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { SignInDto } from 'src/user/dto/sign-in.dto';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
+import { UpdateUserDto } from 'src/user/dto/update-user.dto';
 
 const scrypt = promisify(_scrypt);
 
@@ -68,5 +69,28 @@ export class AuthService {
     // return the user
     const { id, created, updated, deleted } = user;
     return { id, email, created, updated, deleted };
+  }
+  async changePassword(id: string, updateUserDto: UpdateUserDto) {
+    const { password, newPassword } = updateUserDto;
+
+    // Find the user by id
+    const user = await this.userService.findOneById(id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const [salt, storedHash] = user.password.split('.');
+    const currentHash = (await scrypt(password, salt, 32)) as Buffer;
+
+    if (storedHash !== currentHash.toString('hex')) {
+      throw new NotFoundException('Current password is incorrect');
+    }
+    const newSalt = randomBytes(8).toString('hex');
+    const newHash = (await scrypt(newPassword, newSalt, 32)) as Buffer;
+    const newHashString = newSalt + '.' + newHash.toString('hex');
+    updateUserDto.password = newHashString;
+    await this.userService.update(id, updateUserDto);
+
+    return { message: 'Password updated successfully' };
   }
 }

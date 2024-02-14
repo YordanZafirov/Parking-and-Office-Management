@@ -1,4 +1,11 @@
-import { Controller, Post, Req, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Req,
+  Res,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { Express } from 'express';
 import { AwsService } from './aws.service';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -14,7 +21,7 @@ export class AwsController {
     @Req() request,
     @Res() response,
   ) {
-    try{
+    try {
       return this.awsService.uploadImage(file);
     } catch (error) {
       return response.status(400).json({ message: 'Error uploading image' });
