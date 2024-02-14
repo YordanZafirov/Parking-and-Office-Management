@@ -1,7 +1,8 @@
-import { IsEmail, IsString } from 'class-validator';
+import { IsString } from 'class-validator';
+import { IsYaraEmail } from 'src/utils/decorators/email/email.decorator';
 
 export class SignInDto {
-  @IsEmail()
+  @IsYaraEmail()
   email: string;
 
   @IsString()
