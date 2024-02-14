@@ -5,11 +5,11 @@ import {
   TableForeignKey,
 } from 'typeorm';
 
-export class CreateSpotTable1707836040675 implements MigrationInterface {
+export class CreateReservationTable1707836062685 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'spot',
+        name: 'reservation',
         columns: [
           {
             name: 'id',
@@ -19,34 +19,24 @@ export class CreateSpotTable1707836040675 implements MigrationInterface {
             generationStrategy: 'uuid',
           },
           {
-            name: 'top',
-            type: 'float',
+            name: 'start',
+            type: 'timestamp',
           },
           {
-            name: 'left',
-            type: 'float',
+            name: 'end',
+            type: 'timestamp',
           },
           {
-            name: 'name',
-            type: 'varchar',
-            length: '64',
-          },
-          {
-            name: 'description',
+            name: 'comment',
             type: 'varchar',
             length: '256',
           },
           {
-            name: 'is_permanent',
-            type: 'boolean',
-            default: false,
-          },
-          {
-            name: 'spot_type_id',
+            name: 'spot_id',
             type: 'uuid',
           },
           {
-            name: 'schema_id',
+            name: 'user_id',
             type: 'uuid',
           },
           {
@@ -64,26 +54,30 @@ export class CreateSpotTable1707836040675 implements MigrationInterface {
             type: 'timestamp',
             isNullable: true,
           },
+          {
+            name: 'modified_by',
+            type: 'uuid',
+          },
         ],
       }),
       true,
     );
 
     await queryRunner.createForeignKey(
-      'spot',
+      'reservation',
       new TableForeignKey({
-        columnNames: ['schema_id'],
+        columnNames: ['spot_id'],
         referencedColumnNames: ['id'],
-        referencedTableName: 'schema',
+        referencedTableName: 'spot',
       }),
     );
 
     await queryRunner.createForeignKey(
-      'spot',
+      'reservation',
       new TableForeignKey({
-        columnNames: ['spot_type_id'],
+        columnNames: ['user_id'],
         referencedColumnNames: ['id'],
-        referencedTableName: 'spot_type',
+        referencedTableName: 'user',
       }),
     );
   }

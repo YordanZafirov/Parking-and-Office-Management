@@ -33,6 +33,10 @@ export class CreateSpotTypeTable1707835755219 implements MigrationInterface {
             type: 'timestamp',
             isNullable: true,
           },
+          {
+            name: 'modified_by',
+            type: 'uuid',
+          },
         ],
       }),
       true,

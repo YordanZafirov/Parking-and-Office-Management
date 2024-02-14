@@ -43,6 +43,10 @@ export class CreateLocationTable1707835790239 implements MigrationInterface {
             type: 'timestamp',
             isNullable: true,
           },
+          {
+            name: 'modified_by',
+            type: 'uuid',
+          },
         ],
       }),
       true,
