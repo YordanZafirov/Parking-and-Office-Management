@@ -88,8 +88,8 @@ export class AuthService {
     const newSalt = randomBytes(8).toString('hex');
     const newHash = (await scrypt(newPassword, newSalt, 32)) as Buffer;
     const newHashString = newSalt + '.' + newHash.toString('hex');
-
-    await this.userService.update(id, { password: newHashString });
+    updateUserDto.password = newHashString;
+    await this.userService.update(id, updateUserDto);
 
     return { message: 'Password updated successfully' };
   }

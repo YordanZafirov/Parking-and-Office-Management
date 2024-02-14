@@ -19,7 +19,7 @@ export class User {
   @Column()
   password: string;
 
-  @Column({ type: 'enum', enum: UserRoles, default: UserRoles.OPERATOR })
+  @Column({ type: 'enum', enum: UserRoles, default: UserRoles.EMPLOYEE })
   role: UserRoles;
 
   @CreateDateColumn()
