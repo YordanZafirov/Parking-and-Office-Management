@@ -27,8 +27,8 @@ export class CreateUserTable1707835683091 implements MigrationInterface {
             name: 'role',
             type: 'enum',
             enumName: 'user_role',
-            enum: ['ADMIN', 'OPERATOR'],
-            default: `'OPERATOR'`,
+            enum: ['ADMIN', 'EMPLOYEE'],
+            default: `'EMPLOYEE'`,
           },
           {
             name: 'created_at',
@@ -44,6 +44,10 @@ export class CreateUserTable1707835683091 implements MigrationInterface {
             name: 'deleted_at',
             type: 'timestamp',
             isNullable: true,
+          },
+          {
+            name: 'modified_by',
+            type: 'uuid',
           },
         ],
       }),
