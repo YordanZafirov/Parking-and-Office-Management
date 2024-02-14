@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SpotType } from './entities/spot-type.entity';
 import { Repository } from 'typeorm';
+import { CreateSpotTypeDto } from './dto/create-spot-type.dto';
 
 @Injectable()
 export class SpotTypeService {
@@ -24,5 +25,10 @@ export class SpotTypeService {
       throw new NotFoundException(`Spot type with id: ${id} not found`);
     }
     return spotType;
+  }
+
+  async create(createSpotTypeDto: CreateSpotTypeDto) {
+    const spotType = this.repo.create(createSpotTypeDto);
+    return await this.repo.save(spotType);
   }
 }
