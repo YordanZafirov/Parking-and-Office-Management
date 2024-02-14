@@ -1,9 +1,10 @@
-import { IsEmail, IsString } from 'class-validator';
+import { IsYaraEmail } from 'src/utils/decorators/user-data/email.decorator';
+import { IsStrongPassword } from 'src/utils/decorators/user-data/password.decorator';
 
 export class SignInDto {
-  @IsEmail()
+  @IsYaraEmail()
   email: string;
 
-  @IsString()
+  @IsStrongPassword()
   password: string;
 }

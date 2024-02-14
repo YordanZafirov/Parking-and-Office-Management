@@ -1,13 +1,15 @@
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty } from 'class-validator';
+import { IsYaraEmail } from 'src/utils/decorators/user-data/email.decorator';
 import { IsUnique } from 'src/utils/decorators/unique/unique.decorator';
+import { IsStrongPassword } from 'src/utils/decorators/user-data/password.decorator';
 
 export class CreateUserDto {
-  @IsEmail()
+  @IsYaraEmail()
   @IsNotEmpty()
   @IsUnique({ tableName: 'user', column: 'email' })
   email: string;
 
-  @IsString()
+  @IsStrongPassword()
   @IsNotEmpty()
   password: string;
 }
