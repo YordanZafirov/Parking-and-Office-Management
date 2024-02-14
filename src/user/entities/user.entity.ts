@@ -22,12 +22,15 @@ export class User {
   @Column({ type: 'enum', enum: UserRoles, default: UserRoles.EMPLOYEE })
   role: UserRoles;
 
-  @CreateDateColumn()
-  created: Date;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
 
-  @UpdateDateColumn()
-  updated: Date;
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 
-  @DeleteDateColumn()
-  deleted: Date;
+  @DeleteDateColumn({ name: 'deleted_at', nullable: true })
+  deletedAt: Date;
+
+  @Column({ name: 'modified_by', type: 'uuid', nullable: true })
+  modifiedBy: string;
 }

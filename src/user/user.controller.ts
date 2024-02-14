@@ -7,6 +7,7 @@ import {
   Delete,
   ParseUUIDPipe,
   Patch,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -16,8 +17,10 @@ import { UserRoles } from './user-role.enum';
 import { SignInDto } from './dto/sign-in.dto';
 import { Roles } from 'src/utils/decorators/role/roles.decorator';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { RolesGuard } from 'src/utils/guards/roles.guard';
 
 @Controller('user')
+@UseGuards(RolesGuard)
 export class UserController {
   constructor(
     private readonly userService: UserService,
