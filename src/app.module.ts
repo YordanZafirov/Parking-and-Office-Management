@@ -11,6 +11,7 @@ import { AuthModule } from './auth/auth.module';
 import { SpotTypeModule } from './spot-type/spot-type.module';
 import { SchemaTypeModule } from './schema-type/schema-type.module';
 import { UserModule } from './user/user.module';
+import { AwsModule } from './aws/aws.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { UserModule } from './user/user.module';
     SpotTypeModule,
     SchemaTypeModule,
     UserModule,
+    AwsModule,
   ],
   controllers: [],
   providers: [
