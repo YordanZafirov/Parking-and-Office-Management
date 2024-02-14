@@ -67,8 +67,8 @@ export class AuthService {
     const user = await this.userService.create({ email, password: result });
 
     // return the user
-    const { id, created, updated, deleted } = user;
-    return { id, email, created, updated, deleted };
+    const { id, createdAt, updatedAt, deletedAt } = user;
+    return { id, email, createdAt, updatedAt, deletedAt };
   }
   async changePassword(id: string, updateUserDto: UpdateUserDto) {
     const { password, newPassword } = updateUserDto;
