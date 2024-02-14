@@ -1,17 +1,25 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  UseGuards,
+} from '@nestjs/common';
 import { SpotTypeService } from './spot-type.service';
+import { RolesGuard } from 'src/utils/guards/roles.guard';
 
+@UseGuards(RolesGuard)
 @Controller('spot-type')
 export class SpotTypeController {
   constructor(private readonly spotTypeService: SpotTypeService) {}
 
   @Get()
-  findAll() {
-    return this.spotTypeService.findAll();
+  async findAll() {
+    return await this.spotTypeService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.spotTypeService.findOne(+id);
+  async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
+    return await this.spotTypeService.findOne(id);
   }
 }
