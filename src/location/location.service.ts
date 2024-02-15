@@ -31,7 +31,9 @@ export class LocationService {
   }
 
   async create(createLocationDto: CreateLocationDto) {
-    const user = this.userService.findOneById(createLocationDto.modifiedBy);
+    const user = await this.userService.findOneById(
+      createLocationDto.modifiedBy,
+    );
 
     if (user) {
       const location = this.repo.create(createLocationDto);

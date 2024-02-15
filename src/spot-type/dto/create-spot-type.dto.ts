@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsString, MaxLength, MinLength } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsUUID,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 import { IsUnique } from 'src/utils/decorators/unique/unique.decorator';
 
 export class CreateSpotTypeDto {
@@ -12,4 +18,8 @@ export class CreateSpotTypeDto {
     message: 'Name is too long',
   })
   name: string;
+
+  @IsNotEmpty()
+  @IsUUID()
+  modifiedBy: string;
 }

@@ -3,10 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { SpotType } from './entities/spot-type.entity';
 import { Repository } from 'typeorm';
 import { CreateSpotTypeDto } from './dto/create-spot-type.dto';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class SpotTypeService {
-  constructor(@InjectRepository(SpotType) private repo: Repository<SpotType>) {}
+  constructor(
+    @InjectRepository(SpotType) private repo: Repository<SpotType>,
+    private readonly userService: UserService,
+  ) {}
 
   async findAll() {
     const spotType = await this.repo.find();
@@ -28,7 +32,14 @@ export class SpotTypeService {
   }
 
   async create(createSpotTypeDto: CreateSpotTypeDto) {
-    const spotType = this.repo.create(createSpotTypeDto);
-    return await this.repo.save(spotType);
+    const user = await this.userService.findOneById(
+      createSpotTypeDto.modifiedBy,
+    );
+
+    if (user) {
+      const spotType = this.repo.create(createSpotTypeDto);
+
+      return await this.repo.save(spotType);
+    }
   }
 }

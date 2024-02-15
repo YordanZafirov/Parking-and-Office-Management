@@ -41,25 +41,25 @@ export class UserController {
   @Roles(UserRoles.ADMIN)
   @Get()
   async findAll() {
-    return this.userService.findAll();
+    return await this.userService.findAll();
   }
 
   @Roles(UserRoles.ADMIN)
   @Get(':id')
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.userService.findOneById(id);
+    return await this.userService.findOneById(id);
   }
   @Patch(':id')
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    return this.authService.changePassword(id, updateUserDto);
+    return await this.authService.changePassword(id, updateUserDto);
   }
 
   @Roles(UserRoles.ADMIN)
   @Delete(':id')
   async remove(@Param('id', ParseUUIDPipe) id: string) {
-    return this.userService.remove(id);
+    return await this.userService.remove(id);
   }
 }
