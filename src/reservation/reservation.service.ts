@@ -76,13 +76,16 @@ export class ReservationService {
     );
 
     for (const re of existingReservations) {
-      console.log(createReservationDto.start);
-      console.log(re.start);
+      const reStart = new Date(re.start);
+      const reEnd = new Date(re.end);
+      const dtoStart = new Date(createReservationDto.start);
+      const dtoEnd = new Date(createReservationDto.end);
+
       if (
-        (createReservationDto.start > re.start &&
-          createReservationDto.start < re.end) ||
-        (createReservationDto.end > re.start &&
-          createReservationDto.end < re.end)
+        (dtoStart.getTime() >= reStart.getTime() &&
+          dtoStart.getTime() <= reEnd.getTime()) ||
+        (dtoEnd.getTime() >= reStart.getTime() &&
+          dtoEnd.getTime() <= reEnd.getTime())
       ) {
         throw new BadRequestException(
           'Reservation in this period already exists',
