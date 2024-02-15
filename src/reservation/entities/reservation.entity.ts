@@ -1,3 +1,4 @@
+import { IsNotEmpty, Length } from 'class-validator';
 import {
   Entity,
   Column,
@@ -18,7 +19,11 @@ export class Reservation {
   @Column({ nullable: false })
   end: Date;
 
-  @Column({})
+  @IsNotEmpty()
+  @Column({ nullable: false })
+  @Length(2, 256, {
+    message: 'Comment must be between 2 and 256 characters long',
+  })
   comment: string;
 
   @Column({ name: 'spot_id', nullable: false, type: 'uuid' })
