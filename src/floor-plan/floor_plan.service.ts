@@ -9,6 +9,7 @@ import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { FloorPlan } from './entities/floor_plan.entity';
 import { EntityManager, Not, Repository } from 'typeorm';
 import { validate } from 'class-validator';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class FloorPlanService {
@@ -16,6 +17,7 @@ export class FloorPlanService {
     @InjectEntityManager() private readonly entityManager: EntityManager,
     @InjectRepository(FloorPlan)
     private floorPlanRepository: Repository<FloorPlan>,
+    private userService: UserService,
   ) {}
 
   async findAll() {
@@ -37,28 +39,21 @@ export class FloorPlanService {
       throw new BadRequestException(errors);
     }
 
-    const { name, imgUrl, locationId } = createFloorPlanDto;
+    const user = this.userService.findOneById(createFloorPlanDto.modifiedBy);
+    if (user) {
+      const { name, imgUrl, locationId, modifiedBy } = createFloorPlanDto;
 
-    const existingFloorPlan = await this.floorPlanRepository.findOne({
-      where: { name },
-    });
+      const newFloorPlan = this.floorPlanRepository.create({
+        name,
+        imgUrl,
+        locationId,
+        modifiedBy,
+      });
 
-    if (
-      existingFloorPlan &&
-      createFloorPlanDto.name === existingFloorPlan.name
-    ) {
-      throw new BadRequestException(`Floor Plan already exists!`);
+      const newCreatedFloorPlan =
+        await this.floorPlanRepository.save(newFloorPlan);
+      return newCreatedFloorPlan;
     }
-
-    const newFloorPlan = this.floorPlanRepository.create({
-      name,
-      imgUrl,
-      locationId,
-    });
-
-    const newCreatedFloorPlan =
-      await this.floorPlanRepository.save(newFloorPlan);
-    return newCreatedFloorPlan;
   }
 
   async update(

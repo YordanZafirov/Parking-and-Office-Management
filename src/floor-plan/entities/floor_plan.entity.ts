@@ -18,18 +18,18 @@ export class FloorPlan {
   @Column({ name: 'img_url', nullable: false })
   imgUrl: string;
 
-  @Column({ name: 'location_id', nullable: false })
+  @Column({ name: 'location_id', nullable: false, type: 'uuid' })
   locationId: string;
 
   @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
-  created: Date;
+  createdAt: Date;
 
   @UpdateDateColumn({ type: 'timestamp', name: 'updated_at' })
-  updated: Date;
+  updatedAt: Date;
 
   @DeleteDateColumn({ type: 'timestamp', name: 'deleted_at', nullable: true })
-  deleted: Date;
+  deletedAt: Date;
 
-  @Column({ name: 'modified_by', type: 'uuid' })
+  @Column({ type: 'uuid', name: 'modified_by', nullable: false })
   modifiedBy: string;
 }
