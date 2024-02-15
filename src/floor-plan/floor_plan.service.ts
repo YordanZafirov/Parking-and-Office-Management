@@ -30,6 +30,9 @@ export class FloorPlanService {
 
   async findOneById(id: string): Promise<FloorPlan> {
     const existingFloorPlan = await this.floorPlanRepository.findOneBy({ id });
+    if (!existingFloorPlan) {
+      throw new NotFoundException(`Floor Plan with id: ${id} not found`);
+    }
     return existingFloorPlan;
   }
 
