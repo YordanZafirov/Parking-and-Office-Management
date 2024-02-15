@@ -85,7 +85,8 @@ export class SpotService {
       throw new NotFoundException(`Spot with id ${id} not found`);
     }
     Object.assign(spot, updateSpotDto);
-    return this.spotRepository.save(spot);
+    const updatedSpot = await this.spotRepository.save(spot);
+    return updatedSpot;
   }
 
   async remove(id: string) {

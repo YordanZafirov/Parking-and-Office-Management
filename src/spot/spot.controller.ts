@@ -33,23 +33,23 @@ export class SpotController {
 
   @Roles(UserRoles.ADMIN)
   @Post()
-  create(@Body() createSpotDto: CreateSpotDto) {
-    return this.spotService.create(createSpotDto);
+  async create(@Body() createSpotDto: CreateSpotDto) {
+    return await this.spotService.create(createSpotDto);
   }
 
   @Roles(UserRoles.ADMIN)
   @Post('create-multiple')
-  createMultiple(@Body() createSpotDto: CreateSpotDto[]) {
-    return this.spotService.createMultiple(createSpotDto);
+  async createMultiple(@Body() createSpotDto: CreateSpotDto[]) {
+    return await this.spotService.createMultiple(createSpotDto);
   }
 
   @Roles(UserRoles.ADMIN)
   @Patch(':id')
-  update(
+  async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateSpotDto: UpdateSpotDto,
   ) {
-    return this.spotService.update(id, updateSpotDto);
+    return await this.spotService.update(id, updateSpotDto);
   }
 
   @Roles(UserRoles.ADMIN)
