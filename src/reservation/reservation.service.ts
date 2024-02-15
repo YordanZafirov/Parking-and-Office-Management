@@ -22,7 +22,7 @@ export class ReservationService {
   async findAll() {
     const reservations = await this.reservationRepository.find();
     if (!reservations) {
-      throw new NotFoundException(`No floor plan found`);
+      throw new NotFoundException(`No reservation found`);
     }
     return reservations;
   }
@@ -37,16 +37,18 @@ export class ReservationService {
     return existingreservation;
   }
 
-  async create(createFloorPlanDto: CreateReservationDto): Promise<Reservation> {
-    const errors = await validate(createFloorPlanDto);
+  async create(
+    createReservationDto: CreateReservationDto,
+  ): Promise<Reservation> {
+    const errors = await validate(createReservationDto);
     if (errors.length > 0) {
       throw new BadRequestException(errors);
     }
 
-    const user = this.userService.findOneById(createFloorPlanDto.modifiedBy);
+    const user = this.userService.findOneById(createReservationDto.modifiedBy);
     if (user) {
       const { start, end, comment, spotId, userId, modifiedBy } =
-        createFloorPlanDto;
+        createReservationDto;
 
       const newFloorPlan = this.reservationRepository.create({
         start,
@@ -94,14 +96,47 @@ export class ReservationService {
     return updatedFloorPlan;
   }
 
-  async remove(id: string) {
+  async remove(id: string, createReservationDto: CreateReservationDto) {
     const reservation = await this.findOneById(id);
 
     if (!reservation) {
-      throw new NotFoundException('Spot not found');
+      throw new NotFoundException('Reservation not found');
     }
 
-    await this.reservationRepository.softRemove(reservation);
-    return { success: true, message: id };
+    const user = this.userService.findOneById(createReservationDto.modifiedBy);
+    if (user) {
+      await this.reservationRepository.softRemove(reservation);
+      return { success: true, message: id };
+    }
+  }
+
+  async softDelete(id: string): Promise<{
+    id: string;
+    start: Date;
+    end: Date;
+    comment: string;
+    spotId: string;
+    userId: string;
+    message: string;
+  }> {
+    const existingReservation = await this.reservationRepository.findOneBy({
+      id,
+    });
+
+    if (!existingReservation) {
+      throw new NotFoundException(`Reservation with id ${id} not found`);
+    }
+
+    await this.reservationRepository.softDelete({ id });
+
+    return {
+      id,
+      start: existingReservation.start,
+      end: existingReservation.end,
+      comment: existingReservation.comment,
+      spotId: existingReservation.spotId,
+      userId: existingReservation.userId,
+      message: `${id}`,
+    };
   }
 }

@@ -13,8 +13,6 @@ import { ReservationService } from './reservation.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { RolesGuard } from 'src/utils/guards/roles.guard';
-import { Roles } from 'src/utils/decorators/role/roles.decorator';
-import { UserRoles } from 'src/user/user-role.enum';
 
 @Controller('reservation')
 @UseGuards(RolesGuard)
@@ -33,7 +31,6 @@ export class ReservationController {
     return reservation;
   }
 
-  @Roles(UserRoles.ADMIN)
   @Post()
   async createFloorPlan(@Body() createFloorPlan: CreateReservationDto) {
     const createdReservations =
@@ -41,7 +38,6 @@ export class ReservationController {
     return createdReservations;
   }
 
-  @Roles(UserRoles.ADMIN)
   @Patch(':id')
   async updateFloorPlan(
     @Param('id', ParseUUIDPipe) id: string,
@@ -54,9 +50,16 @@ export class ReservationController {
     return updateReservations;
   }
 
-  @Roles(UserRoles.ADMIN)
   @Delete(':id')
-  async remove(@Param('id', ParseUUIDPipe) id: string) {
-    return await this.reservationService.remove(id);
+  async deleteReservation(@Param('id', ParseUUIDPipe) id: string): Promise<{
+    id: string;
+    start: Date;
+    end: Date;
+    comment: string;
+    spotId: string;
+    userId: string;
+    message: string;
+  }> {
+    return this.reservationService.softDelete(id);
   }
 }
