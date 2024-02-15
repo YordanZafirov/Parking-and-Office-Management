@@ -23,7 +23,7 @@ export class Spot {
   })
   description: string;
 
-  @Column({ name: 'is_permanent' })
+  @Column({ name: 'is_permanent', default: false })
   isPermanent: boolean;
 
   @Column()
