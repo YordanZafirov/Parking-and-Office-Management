@@ -22,15 +22,15 @@ export class FloorPlanController {
   constructor(private readonly floorPlanService: FloorPlanService) {}
 
   @Get()
-  async getAllFloorPlans() {
+  async findAll() {
     const floorPlans = await this.floorPlanService.findAll();
-    return { data: floorPlans };
+    return floorPlans;
   }
 
   @Get(':id')
-  async getFloorPlanById(@Param('id', ParseUUIDPipe) id: string) {
+  async findOne(@Param('id', ParseUUIDPipe) id: string) {
     const floorPlan = await this.floorPlanService.findOneById(id);
-    return { data: floorPlan };
+    return floorPlan;
   }
 
   @Roles(UserRoles.ADMIN)
@@ -38,7 +38,7 @@ export class FloorPlanController {
   async createFloorPlan(@Body() createFloorPlan: CreateFloorPlanDto) {
     const createdFloorPlan =
       await this.floorPlanService.create(createFloorPlan);
-    return { data: createdFloorPlan };
+    return createdFloorPlan;
   }
 
   @Roles(UserRoles.ADMIN)
@@ -51,7 +51,7 @@ export class FloorPlanController {
       id,
       updateFloorPlanDto,
     );
-    return { data: updateFloorPlan };
+    return updateFloorPlan;
   }
 
   @Roles(UserRoles.ADMIN)
