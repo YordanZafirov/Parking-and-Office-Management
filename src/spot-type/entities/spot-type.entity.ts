@@ -8,21 +8,24 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity()
+@Entity('spot_type')
 export class SpotType {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ nullable: false })
   @Length(2, 64, { message: 'Name must be between 2 and 64 characters long' })
   name: string;
 
-  @CreateDateColumn()
-  created: Date;
+  @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
+  createdAt: Date;
 
-  @UpdateDateColumn()
-  updated: Date;
+  @UpdateDateColumn({ type: 'timestamp', name: 'created_at' })
+  updatedAt: Date;
 
-  @DeleteDateColumn()
-  deleted: Date;
+  @DeleteDateColumn({ type: 'timestamp', name: 'created_at' })
+  deletedAt: Date;
+
+  @Column({ type: 'uuid', name: 'modified_by', nullable: false })
+  modifiedBy: string;
 }
