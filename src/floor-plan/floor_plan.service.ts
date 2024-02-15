@@ -21,7 +21,7 @@ export class FloorPlanService {
   async findAll() {
     const floorPlans = await this.floorPlanRepository.find({});
     if (!floorPlans) {
-      throw new NotFoundException(`No farms found`);
+      throw new NotFoundException(`No floor plan found`);
     }
     return floorPlans;
   }
