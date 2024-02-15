@@ -38,6 +38,12 @@ export class SpotController {
   }
 
   @Roles(UserRoles.ADMIN)
+  @Post('create-multiple')
+  createMultiple(@Body() createSpotDto: CreateSpotDto[]) {
+    return this.spotService.createMultiple(createSpotDto);
+  }
+
+  @Roles(UserRoles.ADMIN)
   @Patch(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,

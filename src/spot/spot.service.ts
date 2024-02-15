@@ -50,6 +50,34 @@ export class SpotService {
     const createdSpot = await this.spotRepository.save(spot);
     return createdSpot;
   }
+  async createMultiple(createSpotDto: CreateSpotDto[]) {
+    const spots = [];
+    for (const sp of createSpotDto) {
+      const {
+        name,
+        description,
+        top,
+        left,
+        spotTypeId,
+        floorPlanId,
+        modifiedBy,
+      } = sp;
+
+      const spot = this.spotRepository.create({
+        name,
+        description,
+        top,
+        left,
+        spotTypeId,
+        floorPlanId,
+        modifiedBy,
+      });
+
+      const createdSpot = await this.spotRepository.save(spot);
+      spots.push(createdSpot);
+    }
+    return spots;
+  }
 
   async update(id: string, updateSpotDto: UpdateSpotDto) {
     const spot = await this.findOne(id);
