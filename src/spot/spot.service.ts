@@ -4,16 +4,19 @@ import { UpdateSpotDto } from './dto/update-spot.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Spot } from './entities/spot.entity';
 import { Repository } from 'typeorm';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class SpotService {
   constructor(
     @InjectRepository(Spot)
     private readonly spotRepository: Repository<Spot>,
+    private readonly userService: UserService,
   ) {}
 
   async findAll() {
-    return await this.spotRepository.find();
+    const spots = await this.spotRepository.find();
+    return spots;
   }
 
   async findOne(id: string) {
@@ -23,6 +26,9 @@ export class SpotService {
     const spot = await this.spotRepository.findOne({
       where: { id },
     });
+    if (!spot) {
+      throw new NotFoundException('Spot not found');
+    }
     return spot;
   }
 
@@ -36,6 +42,8 @@ export class SpotService {
       floorPlanId,
       modifiedBy,
     } = createSpotDto;
+
+    await this.userService.findOneById(modifiedBy);
 
     const spot = this.spotRepository.create({
       name,
@@ -63,6 +71,8 @@ export class SpotService {
         modifiedBy,
       } = sp;
 
+      await this.userService.findOneById(modifiedBy);
+
       const spot = this.spotRepository.create({
         name,
         description,
@@ -80,6 +90,7 @@ export class SpotService {
   }
 
   async update(id: string, updateSpotDto: UpdateSpotDto) {
+    await this.userService.findOneById(updateSpotDto.modifiedBy);
     const spot = await this.findOne(id);
     if (!spot) {
       throw new NotFoundException(`Spot with id ${id} not found`);
