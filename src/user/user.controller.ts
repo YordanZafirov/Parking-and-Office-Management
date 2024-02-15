@@ -20,7 +20,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { RolesGuard } from 'src/utils/guards/roles.guard';
 
 @Controller('user')
-@UseGuards(RolesGuard)
+//@UseGuards(RolesGuard)
 export class UserController {
   constructor(
     private readonly userService: UserService,

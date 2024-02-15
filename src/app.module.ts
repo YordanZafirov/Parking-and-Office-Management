@@ -9,7 +9,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthGuard } from './utils/guards/auth.guard';
 import { AuthModule } from './auth/auth.module';
 import { SpotTypeModule } from './spot-type/spot-type.module';
-import { SchemaTypeModule } from './schema-type/schema-type.module';
 import { UserModule } from './user/user.module';
 import { AwsModule } from './aws/aws.module';
 import { SpotModule } from './spot/spot.module';
@@ -23,7 +22,6 @@ import { LocationModule } from './location/location.module';
     UniqueModule,
     AuthModule,
     SpotTypeModule,
-    SchemaTypeModule,
     UserModule,
     AwsModule,
     SpotModule,
@@ -33,14 +31,14 @@ import { LocationModule } from './location/location.module';
   controllers: [],
   providers: [
     IsUniqueConstraint,
-    {
-      provide: APP_GUARD,
-      useClass: AuthGuard,
-    },
-    {
-      provide: APP_FILTER,
-      useClass: GlobalExceptionFilter,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: AuthGuard,
+    // },
+    // {
+    //   provide: APP_FILTER,
+    //   useClass: GlobalExceptionFilter,
+    // },
   ],
 })
 export class AppModule {}
