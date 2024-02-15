@@ -1,8 +1,6 @@
 import {
   Controller,
   Post,
-  Req,
-  Res,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -16,15 +14,11 @@ export class AwsController {
 
   @Post()
   @UseInterceptors(FileInterceptor('image'))
-  async uploadImage(
-    @UploadedFile() file: Express.Multer.File,
-    @Req() request,
-    @Res() response,
-  ) {
+  async uploadImage(@UploadedFile() file: Express.Multer.File) {
     try {
-      return this.awsService.uploadImage(file);
+      return await this.awsService.uploadImage(file);
     } catch (error) {
-      return response.status(400).json({ message: 'Error uploading image' });
+      throw new Error('Error uploading image: ' + error.message);
     }
   }
 }

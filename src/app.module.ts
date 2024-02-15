@@ -14,7 +14,6 @@ import { AwsModule } from './aws/aws.module';
 import { SpotModule } from './spot/spot.module';
 import { FloorPlanModule } from './floor-plan/floor_plan.module';
 import { LocationModule } from './location/location.module';
-import { ReservationModule } from './reservation/reservation.module';
 
 @Module({
   imports: [
@@ -28,7 +27,6 @@ import { ReservationModule } from './reservation/reservation.module';
     SpotModule,
     FloorPlanModule,
     LocationModule,
-    ReservationModule,
   ],
   controllers: [],
   providers: [
