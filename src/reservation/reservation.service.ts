@@ -1,3 +1,4 @@
+import { SpotService } from './../spot/spot.service';
 import {
   BadRequestException,
   Injectable,
@@ -17,6 +18,7 @@ export class ReservationService {
     @InjectRepository(Reservation)
     private reservationRepository: Repository<Reservation>,
     private userService: UserService,
+    private spotService: SpotService,
   ) {}
 
   async findAll() {
@@ -28,13 +30,31 @@ export class ReservationService {
   }
 
   async findOneById(id: string): Promise<Reservation> {
-    const existingreservation = await this.reservationRepository.findOneBy({
+    const existingReservation = await this.reservationRepository.findOneBy({
       id,
     });
-    if (!existingreservation) {
+    if (!existingReservation) {
       throw new NotFoundException(`Reservation with id: ${id} not found`);
     }
-    return existingreservation;
+    return existingReservation;
+  }
+
+  async findAllByCondition(condition: any) {
+    if (!condition) return null;
+    const reservations = await this.reservationRepository.find({
+      where: condition,
+    });
+    return reservations;
+  }
+
+  async findAllBySpotId(spotId: string) {
+    const reservations = await this.findAllByCondition({ spotId });
+    return reservations;
+  }
+
+  async findAllByUserId(userId: string) {
+    const reservations = await this.findAllByCondition({ userId });
+    return reservations;
   }
 
   async create(
@@ -45,24 +65,46 @@ export class ReservationService {
       throw new BadRequestException(errors);
     }
 
-    const user = this.userService.findOneById(createReservationDto.modifiedBy);
-    if (user) {
-      const { start, end, comment, spotId, userId, modifiedBy } =
-        createReservationDto;
+    await this.userService.findOneById(createReservationDto.modifiedBy);
 
-      const newFloorPlan = this.reservationRepository.create({
-        start,
-        end,
-        comment,
-        spotId,
-        userId,
-        modifiedBy,
-      });
-
-      const newCreatedFloorPlan =
-        await this.reservationRepository.save(newFloorPlan);
-      return newCreatedFloorPlan;
+    const spot = await this.spotService.findOne(createReservationDto.spotId);
+    if (spot.isPermanent) {
+      throw new BadRequestException('This spot is marked as permanently used');
     }
+    const existingReservations = await this.findAllBySpotId(
+      createReservationDto.spotId,
+    );
+
+    for (const re of existingReservations) {
+      console.log(createReservationDto.start);
+      console.log(re.start);
+      if (
+        (createReservationDto.start > re.start &&
+          createReservationDto.start < re.end) ||
+        (createReservationDto.end > re.start &&
+          createReservationDto.end < re.end)
+      ) {
+        throw new BadRequestException(
+          'Reservation in this period already exists',
+        );
+      }
+    }
+
+    const { start, end, comment, spotId, userId, modifiedBy } =
+      createReservationDto;
+
+    const newReservation = this.reservationRepository.create({
+      start,
+      end,
+      comment,
+      spotId,
+      userId,
+      modifiedBy,
+    });
+
+    const newCreatedReservation =
+      await this.reservationRepository.save(newReservation);
+    return newCreatedReservation;
   }
 
   async update(

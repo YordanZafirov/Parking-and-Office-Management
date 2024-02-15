@@ -13,6 +13,7 @@ import { ReservationService } from './reservation.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { RolesGuard } from 'src/utils/guards/roles.guard';
+import { Reservation } from './entities/reservation.entity';
 
 @Controller('reservation')
 @UseGuards(RolesGuard)
@@ -29,6 +30,14 @@ export class ReservationController {
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     const reservation = await this.reservationService.findOneById(id);
     return reservation;
+  }
+  @Get('by-spot/:spotId')
+  async findAllBySpot(@Param('spotId') spotId: string): Promise<Reservation[]> {
+    return await this.reservationService.findAllBySpotId(spotId);
+  }
+  @Get('by-user/:userId')
+  async findAllByUser(@Param('userId') userId: string): Promise<Reservation[]> {
+    return await this.reservationService.findAllByUserId(userId);
   }
 
   @Post()
