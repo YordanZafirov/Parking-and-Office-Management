@@ -11,18 +11,9 @@ export class UserService {
     @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
 
-  async create(createUserDto: CreateUserDto) {
-    const { email, password } = createUserDto;
-    const user = this.userRepository.create({
-      email,
-      password,
-    });
-
-    return await this.userRepository.save(user);
-  }
-
   async findAll() {
-    return await this.userRepository.find();
+    const users = await this.userRepository.find();
+    return users;
   }
 
   async findOneById(id: string) {
@@ -32,6 +23,9 @@ export class UserService {
     const user = await this.userRepository.findOne({
       where: { id },
     });
+    if (!user) {
+      throw new NotFoundException("User doesn't exist");
+    }
     return user;
   }
 
@@ -40,7 +34,20 @@ export class UserService {
       return null;
     }
     const user = await this.userRepository.findOne({ where: { email } });
+    if (!user) {
+      throw new NotFoundException("User doesn't exist");
+    }
     return user;
+  }
+  async create(createUserDto: CreateUserDto) {
+    const { email, password } = createUserDto;
+    const user = this.userRepository.create({
+      email,
+      password,
+    });
+
+    const createdUser = await this.userRepository.save(user);
+    return createdUser;
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
