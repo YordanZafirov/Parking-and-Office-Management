@@ -42,10 +42,15 @@ export class LocationService {
   }
 
   async update(id: string, updateLocationDto: UpdateLocationDto) {
-    const location = await this.findOne(id);
+    const user = await this.userService.findOneById(
+      updateLocationDto.modifiedBy,
+    );
 
-    Object.assign(location, updateLocationDto);
-    return await this.repo.save(location);
+    if (user) {
+      const location = await this.findOne(id);
+      Object.assign(location, updateLocationDto);
+      return await this.repo.save(location);
+    }
   }
 
   async delete(id: string) {
