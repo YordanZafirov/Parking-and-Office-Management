@@ -18,8 +18,8 @@ export class Spot {
   name: string;
 
   @Column()
-  @Length(2, 64, {
-    message: 'Description must be between 2 and 64 characters long',
+  @Length(2, 256, {
+    message: 'Description must be between 2 and 256 characters long',
   })
   description: string;
 
