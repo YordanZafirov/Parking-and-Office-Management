@@ -19,7 +19,7 @@ export class FloorPlanService {
   ) {}
 
   async findAll() {
-    const floorPlans = await this.floorPlanRepository.find({});
+    const floorPlans = await this.floorPlanRepository.find();
     if (!floorPlans) {
       throw new NotFoundException(`No floor plan found`);
     }
@@ -37,7 +37,7 @@ export class FloorPlanService {
       throw new BadRequestException(errors);
     }
 
-    const { name, imgUrl, location } = createFloorPlanDto;
+    const { name, imgUrl, locationId } = createFloorPlanDto;
 
     const existingFloorPlan = await this.floorPlanRepository.findOne({
       where: { name },
@@ -53,7 +53,7 @@ export class FloorPlanService {
     const newFloorPlan = this.floorPlanRepository.create({
       name,
       imgUrl,
-      location,
+      locationId,
     });
 
     const newCreatedFloorPlan =
@@ -122,7 +122,7 @@ export class FloorPlanService {
       id,
       name: existingFloorPlan.name,
       imgUrl: existingFloorPlan.imgUrl,
-      location: existingFloorPlan.location,
+      location: existingFloorPlan.locationId,
       message: `${id}`,
     };
   }

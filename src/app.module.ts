@@ -13,6 +13,7 @@ import { SchemaTypeModule } from './schema-type/schema-type.module';
 import { UserModule } from './user/user.module';
 import { AwsModule } from './aws/aws.module';
 import { SpotModule } from './spot/spot.module';
+import { FloorPlanModule } from './floor-plan/floor_plan.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { SpotModule } from './spot/spot.module';
     UserModule,
     AwsModule,
     SpotModule,
+    FloorPlanModule,
   ],
   controllers: [],
   providers: [

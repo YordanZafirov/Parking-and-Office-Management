@@ -18,8 +18,8 @@ export class FloorPlan {
   @Column({ name: 'img_url', nullable: false })
   imgUrl: string;
 
-  @Column({ nullable: false })
-  location: string;
+  @Column({ name: 'location_id', nullable: false })
+  locationId: string;
 
   @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
   created: Date;
