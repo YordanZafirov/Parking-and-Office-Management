@@ -26,10 +26,10 @@ export class Spot {
   @Column({ name: 'is_permanent', default: false })
   isPermanent: boolean;
 
-  @Column()
+  @Column('double precision')
   top: number;
 
-  @Column()
+  @Column('double precision')
   left: number;
 
   @Column({ name: 'spot_type_id', type: 'uuid', nullable: false })

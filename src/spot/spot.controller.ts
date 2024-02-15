@@ -15,6 +15,7 @@ import { UpdateSpotDto } from './dto/update-spot.dto';
 import { RolesGuard } from 'src/utils/guards/roles.guard';
 import { Roles } from 'src/utils/decorators/role/roles.decorator';
 import { UserRoles } from 'src/user/user-role.enum';
+import { CreateSpotsDto } from './dto/create-multiple-spots.dto';
 
 @Controller('spot')
 @UseGuards(RolesGuard)
@@ -39,8 +40,8 @@ export class SpotController {
 
   @Roles(UserRoles.ADMIN)
   @Post('create-multiple')
-  async createMultiple(@Body() createSpotDto: CreateSpotDto[]) {
-    return await this.spotService.createMultiple(createSpotDto);
+  async createMultiple(@Body() createSpotsDto: CreateSpotsDto) {
+    return await this.spotService.createMultiple(createSpotsDto);
   }
 
   @Roles(UserRoles.ADMIN)

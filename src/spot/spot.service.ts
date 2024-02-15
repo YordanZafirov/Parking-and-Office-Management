@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Spot } from './entities/spot.entity';
 import { Repository } from 'typeorm';
 import { UserService } from 'src/user/user.service';
+import { CreateSpotsDto } from './dto/create-multiple-spots.dto';
 
 @Injectable()
 export class SpotService {
@@ -33,55 +34,21 @@ export class SpotService {
   }
 
   async create(createSpotDto: CreateSpotDto) {
-    const {
-      name,
-      description,
-      top,
-      left,
-      spotTypeId,
-      floorPlanId,
-      modifiedBy,
-    } = createSpotDto;
+    const { modifiedBy } = createSpotDto;
 
     await this.userService.findOneById(modifiedBy);
 
-    const spot = this.spotRepository.create({
-      name,
-      description,
-      top,
-      left,
-      spotTypeId,
-      floorPlanId,
-      modifiedBy,
-    });
+    const spot = this.spotRepository.create(createSpotDto);
 
     const createdSpot = await this.spotRepository.save(spot);
     return createdSpot;
   }
-  async createMultiple(createSpotDto: CreateSpotDto[]) {
+  async createMultiple(createSpotsDto: CreateSpotsDto) {
     const spots = [];
-    for (const sp of createSpotDto) {
-      const {
-        name,
-        description,
-        top,
-        left,
-        spotTypeId,
-        floorPlanId,
-        modifiedBy,
-      } = sp;
-
-      await this.userService.findOneById(modifiedBy);
-
-      const spot = this.spotRepository.create({
-        name,
-        description,
-        top,
-        left,
-        spotTypeId,
-        floorPlanId,
-        modifiedBy,
-      });
+    const { modifiedBy } = createSpotsDto.markers[0];
+    await this.userService.findOneById(modifiedBy);
+    for (const sp of createSpotsDto.markers) {
+      const spot = this.spotRepository.create(sp);
 
       const createdSpot = await this.spotRepository.save(spot);
       spots.push(createdSpot);
@@ -92,9 +59,6 @@ export class SpotService {
   async update(id: string, updateSpotDto: UpdateSpotDto) {
     await this.userService.findOneById(updateSpotDto.modifiedBy);
     const spot = await this.findOne(id);
-    if (!spot) {
-      throw new NotFoundException(`Spot with id ${id} not found`);
-    }
     Object.assign(spot, updateSpotDto);
     const updatedSpot = await this.spotRepository.save(spot);
     return updatedSpot;
