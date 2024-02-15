@@ -39,8 +39,11 @@ export class SpotController {
 
   @Roles(UserRoles.ADMIN)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSpotDto: UpdateSpotDto) {
-    return this.spotService.update(+id, updateSpotDto);
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateSpotDto: UpdateSpotDto,
+  ) {
+    return this.spotService.update(id, updateSpotDto);
   }
 
   @Roles(UserRoles.ADMIN)

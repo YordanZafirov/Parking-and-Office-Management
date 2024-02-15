@@ -26,13 +26,39 @@ export class SpotService {
     return spot;
   }
 
-  create(createSpotDto: CreateSpotDto) {
-    return 'This action adds a new spot';
-  }
-  update(id: number, updateSpotDto: UpdateSpotDto) {
-    return `This action updates a #${id} spot`;
+  async create(createSpotDto: CreateSpotDto) {
+    const {
+      name,
+      description,
+      top,
+      left,
+      spotTypeId,
+      floorPlanId,
+      modifiedBy,
+    } = createSpotDto;
+
+    const spot = this.spotRepository.create({
+      name,
+      description,
+      top,
+      left,
+      spotTypeId,
+      floorPlanId,
+      modifiedBy,
+    });
+
+    const createdSpot = await this.spotRepository.save(spot);
+    return createdSpot;
   }
 
+  async update(id: string, updateSpotDto: UpdateSpotDto) {
+    const spot = await this.findOne(id);
+    if (!spot) {
+      throw new NotFoundException(`Spot with id ${id} not found`);
+    }
+    Object.assign(spot, updateSpotDto);
+    return this.spotRepository.save(spot);
+  }
 
   async remove(id: string) {
     const spot = await this.findOne(id);
