@@ -9,11 +9,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthGuard } from './utils/guards/auth.guard';
 import { AuthModule } from './auth/auth.module';
 import { SpotTypeModule } from './spot-type/spot-type.module';
-import { SchemaTypeModule } from './schema-type/schema-type.module';
 import { UserModule } from './user/user.module';
 import { AwsModule } from './aws/aws.module';
 import { SpotModule } from './spot/spot.module';
 import { FloorPlanModule } from './floor-plan/floor_plan.module';
+import { LocationModule } from './location/location.module';
 
 @Module({
   imports: [
@@ -22,11 +22,11 @@ import { FloorPlanModule } from './floor-plan/floor_plan.module';
     UniqueModule,
     AuthModule,
     SpotTypeModule,
-    SchemaTypeModule,
     UserModule,
     AwsModule,
     SpotModule,
     FloorPlanModule,
+    LocationModule,
   ],
   controllers: [],
   providers: [

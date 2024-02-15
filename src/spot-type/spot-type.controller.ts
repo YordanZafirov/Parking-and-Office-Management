@@ -29,7 +29,7 @@ export class SpotTypeController {
   }
 
   @Roles(UserRoles.ADMIN)
-  @Post('/create')
+  @Post()
   async create(@Body() createSpotTypeDto: CreateSpotTypeDto) {
     return await this.spotTypeService.create(createSpotTypeDto);
   }
