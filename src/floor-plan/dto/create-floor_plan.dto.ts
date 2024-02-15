@@ -14,8 +14,7 @@ export class CreateFloorPlanDto {
   @IsString({ message: 'ImageUrl must be a string' })
   imgUrl: string;
 
-  @IsNotEmpty({ message: 'Name cannot be empty' })
-  @IsString({ message: 'Name must be a string' })
+  @IsNotEmpty({ message: 'Locaton cannot be empty' })
   @IsUUID()
   locationId: string;
 
