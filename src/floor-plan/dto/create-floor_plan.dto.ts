@@ -18,4 +18,8 @@ export class CreateFloorPlanDto {
   @IsString({ message: 'Name must be a string' })
   @IsUUID()
   locationId: string;
+
+  @IsNotEmpty()
+  @IsUUID()
+  modifiedBy: string;
 }
