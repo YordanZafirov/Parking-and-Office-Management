@@ -39,6 +39,10 @@ export class CreateLocationDto {
   })
   address: string;
 
+  @IsNotEmpty({ message: 'ImageUrl cannot be empty' })
+  @IsString({ message: 'ImageUrl must be a string' })
+  imgUrl: string;
+
   @IsNotEmpty()
   @IsUUID()
   modifiedBy: string;
