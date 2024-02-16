@@ -1,15 +1,15 @@
+import { SpotService } from './../spot/spot.service';
 import {
   BadRequestException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateReservationDto } from './dto/create-reservation.dto';
-import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { Reservation } from './entities/reservation.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { validate } from 'class-validator';
 import { UserService } from 'src/user/user.service';
+import { CreateReservationsDto } from './dto/create-multiple-reservations.dto';
 
 @Injectable()
 export class ReservationService {
@@ -17,6 +17,7 @@ export class ReservationService {
     @InjectRepository(Reservation)
     private reservationRepository: Repository<Reservation>,
     private userService: UserService,
+    private spotService: SpotService,
   ) {}
 
   async findAll() {
@@ -28,29 +29,115 @@ export class ReservationService {
   }
 
   async findOneById(id: string): Promise<Reservation> {
-    const existingreservation = await this.reservationRepository.findOneBy({
+    const existingReservation = await this.reservationRepository.findOneBy({
       id,
     });
-    if (!existingreservation) {
+    if (!existingReservation) {
       throw new NotFoundException(`Reservation with id: ${id} not found`);
     }
-    return existingreservation;
+    return existingReservation;
+  }
+
+  async findAllByCondition(condition: any) {
+    if (!condition) return null;
+    const reservations = await this.reservationRepository.find({
+      where: condition,
+    });
+    return reservations;
+  }
+
+  async findAllBySpotId(spotId: string) {
+    const reservations = await this.findAllByCondition({ spotId });
+    return reservations;
+  }
+
+  async findAllByUserId(userId: string) {
+    const reservations = await this.findAllByCondition({ userId });
+    return reservations;
   }
 
   async create(
     createReservationDto: CreateReservationDto,
   ): Promise<Reservation> {
-    const errors = await validate(createReservationDto);
-    if (errors.length > 0) {
-      throw new BadRequestException(errors);
+    await this.userService.findOneById(createReservationDto.modifiedBy);
+
+    const spot = await this.spotService.findOne(createReservationDto.spotId);
+    if (spot.isPermanent) {
+      throw new BadRequestException('This spot is marked as permanently used');
+    }
+    const existingReservations = await this.findAllBySpotId(
+      createReservationDto.spotId,
+    );
+
+    for (const re of existingReservations) {
+      const reStart = new Date(re.start);
+      const reEnd = new Date(re.end);
+      const dtoStart = new Date(createReservationDto.start);
+      const dtoEnd = new Date(createReservationDto.end);
+
+      if (
+        (dtoStart.getTime() >= reStart.getTime() &&
+          dtoStart.getTime() <= reEnd.getTime()) ||
+        (dtoEnd.getTime() >= reStart.getTime() &&
+          dtoEnd.getTime() <= reEnd.getTime())
+      ) {
+        throw new BadRequestException(
+          'Reservation in this period already exists',
+        );
+      }
     }
 
-    const user = this.userService.findOneById(createReservationDto.modifiedBy);
-    if (user) {
-      const { start, end, comment, spotId, userId, modifiedBy } =
-        createReservationDto;
+    const { start, end, comment, spotId, userId, modifiedBy } =
+      createReservationDto;
 
-      const newFloorPlan = this.reservationRepository.create({
+    const newReservation = this.reservationRepository.create({
+      start,
+      end,
+      comment,
+      spotId,
+      userId,
+      modifiedBy,
+    });
+
+    const createdReservation =
+      await this.reservationRepository.save(newReservation);
+    return createdReservation;
+  }
+
+  async createMultiple(createReservationsDto: CreateReservationsDto) {
+    const reservations = [];
+    const { modifiedBy } = createReservationsDto.reservations[0];
+    await this.userService.findOneById(modifiedBy);
+    for (const dtoRe of createReservationsDto.reservations) {
+      const spot = await this.spotService.findOne(dtoRe.spotId);
+      if (spot.isPermanent) {
+        throw new BadRequestException(
+          'This spot is marked as permanently used',
+        );
+      }
+      const existingReservations = await this.findAllBySpotId(dtoRe.spotId);
+
+      for (const re of existingReservations) {
+        const reStart = new Date(re.start);
+        const reEnd = new Date(re.end);
+        const dtoStart = new Date(dtoRe.start);
+        const dtoEnd = new Date(dtoRe.end);
+
+        if (
+          (dtoStart.getTime() >= reStart.getTime() &&
+            dtoStart.getTime() <= reEnd.getTime()) ||
+          (dtoEnd.getTime() >= reStart.getTime() &&
+            dtoEnd.getTime() <= reEnd.getTime())
+        ) {
+          throw new BadRequestException(
+            'Reservation in this period already exists',
+          );
+        }
+      }
+
+      const { start, end, comment, spotId, userId, modifiedBy } = dtoRe;
+
+      const newReservation = this.reservationRepository.create({
         start,
         end,
         comment,
@@ -59,41 +146,15 @@ export class ReservationService {
         modifiedBy,
       });
 
-      const newCreatedFloorPlan =
-        await this.reservationRepository.save(newFloorPlan);
-      return newCreatedFloorPlan;
+      reservations.push(newReservation);
     }
-  }
-
-  async update(
-    id: string,
-    updateReservationDto: UpdateReservationDto,
-  ): Promise<Reservation> {
-    const existingReservation = await this.reservationRepository.findOneBy({
-      id,
-    });
-
-    if (!existingReservation) {
-      throw new NotFoundException(`Reservation with id ${id} not found`);
+    const createdReservations = [];
+    for (const reservation of reservations) {
+      const createdReservation =
+        await this.reservationRepository.save(reservation);
+      createdReservations.push(createdReservation);
     }
-
-    const updateResult = await this.reservationRepository.update(
-      id,
-      updateReservationDto,
-    );
-
-    if (updateResult.affected === 0) {
-      throw new NotFoundException(`Reservation with ID ${id} not found`);
-    }
-
-    const updatedFloorPlan = await this.reservationRepository.findOneBy({ id });
-    if (!updatedFloorPlan) {
-      throw new NotFoundException(
-        `Updated Reservation with ID ${id} not found`,
-      );
-    }
-
-    return updatedFloorPlan;
+    return createdReservations;
   }
 
   async remove(id: string, createReservationDto: CreateReservationDto) {

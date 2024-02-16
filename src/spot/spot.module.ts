@@ -9,5 +9,6 @@ import { UserModule } from 'src/user/user.module';
   imports: [TypeOrmModule.forFeature([Spot]), UserModule],
   controllers: [SpotController],
   providers: [SpotService],
+  exports: [SpotService],
 })
 export class SpotModule {}
