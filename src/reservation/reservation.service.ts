@@ -8,7 +8,6 @@ import { CreateReservationDto } from './dto/create-reservation.dto';
 import { Reservation } from './entities/reservation.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { validate } from 'class-validator';
 import { UserService } from 'src/user/user.service';
 import { CreateReservationsDto } from './dto/create-multiple-reservations.dto';
 
@@ -60,11 +59,6 @@ export class ReservationService {
   async create(
     createReservationDto: CreateReservationDto,
   ): Promise<Reservation> {
-    const errors = await validate(createReservationDto);
-    if (errors.length > 0) {
-      throw new BadRequestException(errors);
-    }
-
     await this.userService.findOneById(createReservationDto.modifiedBy);
 
     const spot = await this.spotService.findOne(createReservationDto.spotId);
@@ -105,17 +99,54 @@ export class ReservationService {
       modifiedBy,
     });
 
-    return newReservation;
+    const createdReservation =
+      await this.reservationRepository.save(newReservation);
+    return createdReservation;
   }
 
   async createMultiple(createReservationsDto: CreateReservationsDto) {
     const reservations = [];
     const { modifiedBy } = createReservationsDto.reservations[0];
     await this.userService.findOneById(modifiedBy);
-    for (const re of createReservationsDto.reservations) {
-      const reservation = this.create(re);
+    for (const dtoRe of createReservationsDto.reservations) {
+      const spot = await this.spotService.findOne(dtoRe.spotId);
+      if (spot.isPermanent) {
+        throw new BadRequestException(
+          'This spot is marked as permanently used',
+        );
+      }
+      const existingReservations = await this.findAllBySpotId(dtoRe.spotId);
 
-      reservations.push(reservation);
+      for (const re of existingReservations) {
+        const reStart = new Date(re.start);
+        const reEnd = new Date(re.end);
+        const dtoStart = new Date(dtoRe.start);
+        const dtoEnd = new Date(dtoRe.end);
+
+        if (
+          (dtoStart.getTime() >= reStart.getTime() &&
+            dtoStart.getTime() <= reEnd.getTime()) ||
+          (dtoEnd.getTime() >= reStart.getTime() &&
+            dtoEnd.getTime() <= reEnd.getTime())
+        ) {
+          throw new BadRequestException(
+            'Reservation in this period already exists',
+          );
+        }
+      }
+
+      const { start, end, comment, spotId, userId, modifiedBy } = dtoRe;
+
+      const newReservation = this.reservationRepository.create({
+        start,
+        end,
+        comment,
+        spotId,
+        userId,
+        modifiedBy,
+      });
+
+      reservations.push(newReservation);
     }
     const createdReservations = [];
     for (const reservation of reservations) {
@@ -123,7 +154,6 @@ export class ReservationService {
         await this.reservationRepository.save(reservation);
       createdReservations.push(createdReservation);
     }
-
     return createdReservations;
   }
 
