@@ -27,6 +27,9 @@ export class Location {
   })
   address: string;
 
+  @Column({ name: 'img_url', nullable: false })
+  imgUrl: string;
+
   @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
   createdAt: Date;
 

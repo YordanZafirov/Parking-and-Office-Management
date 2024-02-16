@@ -29,6 +29,11 @@ export class CreateLocationTable1707835790239 implements MigrationInterface {
             length: '128',
           },
           {
+            name: 'img_url',
+            type: 'varchar',
+            length: '512',
+          },
+          {
             name: 'created_at',
             type: 'timestamp',
             default: 'now()',
