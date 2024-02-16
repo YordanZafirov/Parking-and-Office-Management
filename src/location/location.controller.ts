@@ -40,7 +40,7 @@ export class LocationController {
   @Roles(UserRoles.ADMIN)
   @Patch(':id')
   async update(
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateLocationDto: UpdateLocationDto,
   ) {
     return await this.locationService.update(id, updateLocationDto);
