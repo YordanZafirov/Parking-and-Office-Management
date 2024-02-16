@@ -5,12 +5,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreateReservationDto } from './dto/create-reservation.dto';
-import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { Reservation } from './entities/reservation.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { validate } from 'class-validator';
 import { UserService } from 'src/user/user.service';
+import { CreateReservationsDto } from './dto/create-multiple-reservations.dto';
 
 @Injectable()
 export class ReservationService {
@@ -105,40 +105,26 @@ export class ReservationService {
       modifiedBy,
     });
 
-    const newCreatedReservation =
-      await this.reservationRepository.save(newReservation);
-    return newCreatedReservation;
+    return newReservation;
   }
 
-  async update(
-    id: string,
-    updateReservationDto: UpdateReservationDto,
-  ): Promise<Reservation> {
-    const existingReservation = await this.reservationRepository.findOneBy({
-      id,
-    });
+  async createMultiple(createReservationsDto: CreateReservationsDto) {
+    const reservations = [];
+    const { modifiedBy } = createReservationsDto.reservations[0];
+    await this.userService.findOneById(modifiedBy);
+    for (const re of createReservationsDto.reservations) {
+      const reservation = this.create(re);
 
-    if (!existingReservation) {
-      throw new NotFoundException(`Reservation with id ${id} not found`);
+      reservations.push(reservation);
+    }
+    const createdReservations = [];
+    for (const reservation of reservations) {
+      const createdReservation =
+        await this.reservationRepository.save(reservation);
+      createdReservations.push(createdReservation);
     }
 
-    const updateResult = await this.reservationRepository.update(
-      id,
-      updateReservationDto,
-    );
-
-    if (updateResult.affected === 0) {
-      throw new NotFoundException(`Reservation with ID ${id} not found`);
-    }
-
-    const updatedFloorPlan = await this.reservationRepository.findOneBy({ id });
-    if (!updatedFloorPlan) {
-      throw new NotFoundException(
-        `Updated Reservation with ID ${id} not found`,
-      );
-    }
-
-    return updatedFloorPlan;
+    return createdReservations;
   }
 
   async remove(id: string, createReservationDto: CreateReservationDto) {
