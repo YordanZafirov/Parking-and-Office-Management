@@ -24,6 +24,17 @@ export class ReservationController {
     const reservations = await this.reservationService.findAll();
     return reservations;
   }
+  @Get('future')
+  async findAllFuture() {
+    const reservations = await this.reservationService.findAllFuture();
+    return reservations;
+  }
+  @Get('current-and-future')
+  async findAllCurrentAndFuture() {
+    const reservations =
+      await this.reservationService.findAllCurrentAndFuture();
+    return reservations;
+  }
 
   @Get(':id')
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
@@ -38,13 +49,12 @@ export class ReservationController {
   async findAllByUser(@Param('userId') userId: string): Promise<Reservation[]> {
     return await this.reservationService.findAllByUserId(userId);
   }
-
-  // @Post()
-  // async create(@Body() createReservationDto: CreateReservationDto) {
-  //   const createdReservations =
-  //     await this.reservationService.create(createReservationDto);
-  //   return createdReservations;
-  // }
+  @Get('by-user-future/:userId')
+  async findAllFutureByUser(
+    @Param('userId') userId: string,
+  ): Promise<Reservation[]> {
+    return await this.reservationService.findAllFutureByUserId(userId);
+  }
 
   @Post('create-multiple')
   async createMultiple(@Body() createReservationsDto: CreateReservationsDto) {
@@ -52,15 +62,13 @@ export class ReservationController {
   }
 
   @Delete(':id')
-  async delete(@Param('id', ParseUUIDPipe) id: string): Promise<{
-    id: string;
-    start: Date;
-    end: Date;
-    comment: string;
-    spotId: string;
-    userId: string;
-    message: string;
-  }> {
+  async delete(@Param('id', ParseUUIDPipe) id: string): Promise<string> {
     return this.reservationService.softDelete(id);
   }
 }
+// @Post()
+// async create(@Body() createReservationDto: CreateReservationDto) {
+//   const createdReservations =
+//     await this.reservationService.create(createReservationDto);
+//   return createdReservations;
+// }
