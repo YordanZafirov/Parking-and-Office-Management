@@ -39,28 +39,19 @@ export class ReservationController {
     return await this.reservationService.findAllByUserId(userId);
   }
 
-  // @Post()
-  // async create(@Body() createReservationDto: CreateReservationDto) {
-  //   const createdReservations =
-  //     await this.reservationService.create(createReservationDto);
-  //   return createdReservations;
-  // }
-
   @Post('create-multiple')
   async createMultiple(@Body() createReservationsDto: CreateReservationsDto) {
     return await this.reservationService.createMultiple(createReservationsDto);
   }
 
   @Delete(':id')
-  async delete(@Param('id', ParseUUIDPipe) id: string): Promise<{
-    id: string;
-    start: Date;
-    end: Date;
-    comment: string;
-    spotId: string;
-    userId: string;
-    message: string;
-  }> {
+  async delete(@Param('id', ParseUUIDPipe) id: string): Promise<string> {
     return this.reservationService.softDelete(id);
   }
 }
+// @Post()
+// async create(@Body() createReservationDto: CreateReservationDto) {
+//   const createdReservations =
+//     await this.reservationService.create(createReservationDto);
+//   return createdReservations;
+// }
