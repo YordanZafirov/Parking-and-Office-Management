@@ -24,6 +24,17 @@ export class ReservationController {
     const reservations = await this.reservationService.findAll();
     return reservations;
   }
+  @Get('future')
+  async findAllFuture() {
+    const reservations = await this.reservationService.findAllFuture();
+    return reservations;
+  }
+  @Get('current-and-future')
+  async findAllCurrentAndFuture() {
+    const reservations =
+      await this.reservationService.findAllCurrentAndFuture();
+    return reservations;
+  }
 
   @Get(':id')
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
@@ -37,6 +48,12 @@ export class ReservationController {
   @Get('by-user/:userId')
   async findAllByUser(@Param('userId') userId: string): Promise<Reservation[]> {
     return await this.reservationService.findAllByUserId(userId);
+  }
+  @Get('by-user-future/:userId')
+  async findAllFutureByUser(
+    @Param('userId') userId: string,
+  ): Promise<Reservation[]> {
+    return await this.reservationService.findAllFutureByUserId(userId);
   }
 
   @Post('create-multiple')

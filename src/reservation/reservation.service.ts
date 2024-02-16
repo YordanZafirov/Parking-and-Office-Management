@@ -7,7 +7,7 @@ import {
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { Reservation } from './entities/reservation.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { MoreThanOrEqual, Repository } from 'typeorm';
 import { UserService } from 'src/user/user.service';
 import { CreateReservationsDto } from './dto/create-multiple-reservations.dto';
 import { Spot } from 'src/spot/entities/spot.entity';
@@ -24,8 +24,68 @@ export class ReservationService {
   async findAll() {
     const reservations = await this.reservationRepository.find();
     if (!reservations) {
-      throw new NotFoundException(`No reservation found`);
+      throw new NotFoundException(`No reservations found`);
     }
+    return reservations;
+  }
+  async findAllFuture() {
+    const currentDateTime = new Date();
+    const reservations = await this.findAllByCondition({
+      start: MoreThanOrEqual(currentDateTime),
+    });
+    if (!reservations) {
+      throw new NotFoundException(`No reservations found`);
+    }
+    return reservations;
+  }
+  async findAllCurrentAndFuture() {
+    const currentDateTime = new Date();
+    const reservations = await this.findAllByCondition({
+      end: MoreThanOrEqual(currentDateTime),
+    });
+    if (!reservations) {
+      throw new NotFoundException(`No reservations found`);
+    }
+    return reservations;
+  }
+
+  async findAllByCondition(condition: any) {
+    if (!condition) return null;
+    const reservations = await this.reservationRepository.find({
+      where: condition,
+    });
+    return reservations;
+  }
+
+  async findAllBySpotId(spotId: string) {
+    const currentDateTime = new Date();
+    const reservations = await this.findAllByCondition({
+      spotId,
+      end: MoreThanOrEqual(currentDateTime),
+    });
+    return reservations;
+  }
+
+  async findAllCurrentAndFutureByUserId(userId: string) {
+    const currentDateTime = new Date();
+    const reservations = await this.findAllByCondition({
+      userId,
+      end: MoreThanOrEqual(currentDateTime),
+    });
+    return reservations;
+  }
+  async findAllFutureByUserId(userId: string) {
+    const currentDateTime = new Date();
+    const reservations = await this.findAllByCondition({
+      userId,
+      start: MoreThanOrEqual(currentDateTime),
+    });
+    return reservations;
+  }
+  async findAllByUserId(userId: string) {
+    const reservations = await this.findAllByCondition({
+      userId,
+    });
     return reservations;
   }
 
@@ -38,25 +98,6 @@ export class ReservationService {
     }
     return existingReservation;
   }
-
-  async findAllByCondition(condition: any) {
-    if (!condition) return null;
-    const reservations = await this.reservationRepository.find({
-      where: condition,
-    });
-    return reservations;
-  }
-
-  async findAllBySpotId(spotId: string) {
-    const reservations = await this.findAllByCondition({ spotId });
-    return reservations;
-  }
-
-  async findAllByUserId(userId: string) {
-    const reservations = await this.findAllByCondition({ userId });
-    return reservations;
-  }
-
   async createMultiple(createReservationsDto: CreateReservationsDto) {
     const reservations = [];
     const { modifiedBy } = createReservationsDto.reservations[0];
@@ -69,7 +110,8 @@ export class ReservationService {
       const existingSpotReservations = await this.findAllBySpotId(dtoRe.spotId);
       await this.checkIfSpotHasReservation(dtoRe, existingSpotReservations);
 
-      const existingUserReservations = await this.findAllByUserId(dtoRe.userId);
+      const existingUserReservations =
+        await this.findAllCurrentAndFutureByUserId(dtoRe.userId);
       await this.checkIfUserHasReservation(
         dtoSpot,
         dtoRe,
