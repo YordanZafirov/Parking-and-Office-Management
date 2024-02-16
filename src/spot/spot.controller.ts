@@ -10,7 +10,6 @@ import {
   ParseUUIDPipe,
 } from '@nestjs/common';
 import { SpotService } from './spot.service';
-import { CreateSpotDto } from './dto/create-spot.dto';
 import { UpdateSpotDto } from './dto/update-spot.dto';
 import { RolesGuard } from 'src/utils/guards/roles.guard';
 import { Roles } from 'src/utils/decorators/role/roles.decorator';
@@ -34,12 +33,6 @@ export class SpotController {
 
   @Roles(UserRoles.ADMIN)
   @Post()
-  async create(@Body() createSpotDto: CreateSpotDto) {
-    return await this.spotService.create(createSpotDto);
-  }
-
-  @Roles(UserRoles.ADMIN)
-  @Post('create-multiple')
   async createMultiple(@Body() createSpotsDto: CreateSpotsDto) {
     return await this.spotService.createMultiple(createSpotsDto);
   }
@@ -59,3 +52,8 @@ export class SpotController {
     return await this.spotService.remove(id);
   }
 }
+// @Roles(UserRoles.ADMIN)
+// @Post()
+// async create(@Body() createSpotDto: CreateSpotDto) {
+//   return await this.spotService.create(createSpotDto);
+// }

@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateSpotDto } from './dto/create-spot.dto';
 import { UpdateSpotDto } from './dto/update-spot.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Spot } from './entities/spot.entity';
@@ -33,16 +32,6 @@ export class SpotService {
     return spot;
   }
 
-  async create(createSpotDto: CreateSpotDto) {
-    const { modifiedBy } = createSpotDto;
-
-    await this.userService.findOneById(modifiedBy);
-
-    const spot = this.spotRepository.create(createSpotDto);
-
-    const createdSpot = await this.spotRepository.save(spot);
-    return createdSpot;
-  }
   async createMultiple(createSpotsDto: CreateSpotsDto) {
     const spots = [];
     const { modifiedBy } = createSpotsDto.markers[0];
@@ -75,3 +64,14 @@ export class SpotService {
     return { success: true, message: id };
   }
 }
+
+// async create(createSpotDto: CreateSpotDto) {
+//   const { modifiedBy } = createSpotDto;
+
+//   await this.userService.findOneById(modifiedBy);
+
+//   const spot = this.spotRepository.create(createSpotDto);
+
+//   const createdSpot = await this.spotRepository.save(spot);
+//   return createdSpot;
+// }
