@@ -5,6 +5,8 @@ import { Spot } from './entities/spot.entity';
 import { Repository } from 'typeorm';
 import { UserService } from 'src/user/user.service';
 import { CreateSpotsDto } from './dto/create-multiple-spots.dto';
+import { Reservation } from 'src/reservation/entities/reservation.entity';
+import { FloorPlan } from 'src/floor-plan/entities/floor_plan.entity';
 
 @Injectable()
 export class SpotService {
@@ -30,6 +32,40 @@ export class SpotService {
       throw new NotFoundException('Spot not found');
     }
     return spot;
+  }
+
+  async findAllSpotsByTypeAndLocation(
+    locationId: string,
+    spotTypeId: string,
+  ): Promise<Spot[]> {
+    const spots = await this.spotRepository
+      .createQueryBuilder('spot')
+      .innerJoin(FloorPlan, 'floor_plan', 'spot.floor_plan_id = floor_plan.id')
+      .where('floor_plan.location_id = :locationId', { locationId })
+      .andWhere('spot.spot_type_id = :spotTypeId', { spotTypeId })
+      .getMany();
+
+    return spots;
+  }
+  async findFreeSpotsByTypeAndLocationAndPeriod(
+    locationId: string,
+    spotTypeId: string,
+    startDateTime: Date,
+    endDateTime: Date,
+  ): Promise<Spot[]> {
+    const spots = await this.spotRepository
+      .createQueryBuilder('spot')
+      .innerJoin(FloorPlan, 'floor_plan', 'spot.floor_plan_id = floor_plan.id')
+      .innerJoin(Reservation, 'r', 'r.spot_id = spot.id')
+      .where('floor_plan.location_id = :locationId', { locationId })
+      .andWhere('spot.spot_type_id = :spotTypeId', { spotTypeId })
+      .andWhere('(r.start > :endDateTime OR r.end < :startDateTime)', {
+        endDateTime,
+        startDateTime,
+      })
+      .getMany();
+
+    return spots;
   }
 
   async createMultiple(createSpotsDto: CreateSpotsDto) {
