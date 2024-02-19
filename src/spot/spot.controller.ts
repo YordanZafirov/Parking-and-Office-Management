@@ -15,6 +15,8 @@ import { RolesGuard } from 'src/utils/guards/roles.guard';
 import { Roles } from 'src/utils/decorators/role/roles.decorator';
 import { UserRoles } from 'src/user/user-role.enum';
 import { CreateSpotsDto } from './dto/create-multiple-spots.dto';
+import { FindFreeSpotsDto } from './dto/find-free-spots.dto';
+import { FindAllSpotsByTypeAndLocationDto } from './dto/find-all-spots-by-type-and-location.dto';
 
 @Controller('spot')
 @UseGuards(RolesGuard)
@@ -24,6 +26,32 @@ export class SpotController {
   @Get()
   async findAll() {
     return await this.spotService.findAll();
+  }
+
+  @Get('by-type-and-location-all')
+  async findAllSpotsByTypeAndLocation(
+    @Body()
+    findAllSpotsByTypeAndLocationDto: FindAllSpotsByTypeAndLocationDto,
+  ) {
+    const { locationId, spotTypeId } = findAllSpotsByTypeAndLocationDto;
+    return await this.spotService.findAllSpotsByTypeAndLocation(
+      locationId,
+      spotTypeId,
+    );
+  }
+  @Get('by-type-and-location-free')
+  async findFreeSpotsByTypeAndLocationAndPeriod(
+    @Body()
+    findFreeSpotsDto: FindFreeSpotsDto,
+  ) {
+    const { locationId, spotTypeId, startDateTime, endDateTime } =
+      findFreeSpotsDto;
+    return await this.spotService.findFreeSpotsByTypeAndLocationAndPeriod(
+      locationId,
+      spotTypeId,
+      startDateTime,
+      endDateTime,
+    );
   }
 
   @Get(':id')
