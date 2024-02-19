@@ -4,12 +4,16 @@ import { SpotType } from './entities/spot-type.entity';
 import { Repository } from 'typeorm';
 import { CreateSpotTypeDto } from './dto/create-spot-type.dto';
 import { UserService } from 'src/user/user.service';
+import { LocationService } from 'src/location/location.service';
+import { FloorPlan } from 'src/floor-plan/entities/floor_plan.entity';
+import { Spot } from 'src/spot/entities/spot.entity';
 
 @Injectable()
 export class SpotTypeService {
   constructor(
     @InjectRepository(SpotType) private repo: Repository<SpotType>,
     private readonly userService: UserService,
+    private readonly locationService: LocationService,
   ) {}
 
   async findAll() {
@@ -29,6 +33,24 @@ export class SpotTypeService {
       throw new NotFoundException(`Spot type with id: ${id} not found`);
     }
     return spotType;
+  }
+
+  async findAllByLocationId(id: string) {
+    const location = await this.locationService.findOne(id);
+
+    const getAllByLocation = this.repo
+      .createQueryBuilder('spotType')
+      .leftJoinAndSelect(Spot, 'spot', 'spot.spotTypeId = spotType.id')
+      .leftJoinAndSelect(
+        FloorPlan,
+        'floorPlan',
+        'spot.floorPlanId = floorPlan.id',
+      )
+      .select('spotType', 'spot')
+      .where('floorPlan.locationId = :locationId', { locationId: location.id })
+      .getMany();
+
+    return getAllByLocation;
   }
 
   async create(createSpotTypeDto: CreateSpotTypeDto) {

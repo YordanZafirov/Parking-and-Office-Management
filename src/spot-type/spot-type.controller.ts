@@ -5,6 +5,7 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { SpotTypeService } from './spot-type.service';
@@ -21,6 +22,11 @@ export class SpotTypeController {
   @Get()
   async findAll() {
     return await this.spotTypeService.findAll();
+  }
+
+  @Get('/search')
+  async findAllByLocation(@Query('locationId') locationId: string) {
+    return await this.spotTypeService.findAllByLocationId(locationId);
   }
 
   @Get(':id')
