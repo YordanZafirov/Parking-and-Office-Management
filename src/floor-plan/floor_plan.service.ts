@@ -5,19 +5,24 @@ import {
 } from '@nestjs/common';
 import { CreateFloorPlanDto } from './dto/create-floor_plan.dto';
 import { UpdateFloorPlanDto } from './dto/update-floor_plan.dto';
-import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 import { FloorPlan } from './entities/floor_plan.entity';
-import { EntityManager, Not, Repository } from 'typeorm';
-import { validate } from 'class-validator';
+import { Not, Repository } from 'typeorm';
 import { UserService } from 'src/user/user.service';
+import { SpotTypeService } from 'src/spot-type/spot-type.service';
+import { Spot } from 'src/spot/entities/spot.entity';
+import { SpotType } from 'src/spot-type/entities/spot-type.entity';
+import { LocationService } from 'src/location/location.service';
+import { Location } from 'src/location/entities/location.entity';
 
 @Injectable()
 export class FloorPlanService {
   constructor(
-    @InjectEntityManager() private readonly entityManager: EntityManager,
     @InjectRepository(FloorPlan)
     private floorPlanRepository: Repository<FloorPlan>,
     private userService: UserService,
+    private spotTypeService: SpotTypeService,
+    private locaitonService: LocationService,
   ) {}
 
   async findAll() {
@@ -36,12 +41,29 @@ export class FloorPlanService {
     return existingFloorPlan;
   }
 
-  async create(createFloorPlanDto: CreateFloorPlanDto): Promise<FloorPlan> {
-    const errors = await validate(createFloorPlanDto);
-    if (errors.length > 0) {
-      throw new BadRequestException(errors);
-    }
+  async findAllBySpotTypeAndLocationId(spotTypeId: string, locationId: string) {
+    const spotType = await this.spotTypeService.findOne(spotTypeId);
+    const location = await this.locaitonService.findOne(locationId);
+    const getAllBySpotType = this.floorPlanRepository
+      .createQueryBuilder('floorPlan')
+      .leftJoinAndSelect(
+        Location,
+        'location',
+        'floorPlan.locationId = location.id',
+      )
+      .leftJoinAndSelect(Spot, 'spot', 'spot.floorPlanId = floorPlan.id')
+      .leftJoinAndSelect(SpotType, 'spotType', 'spot.spotTypeId = spotType.id')
+      .select('floorPlan', 'spot')
+      .where('spot.spotTypeId = :spotTypeId', { spotTypeId: spotType.id })
+      .andWhere('floorPlan.locationId = :locationId', {
+        locationId: location.id,
+      })
+      .getMany();
 
+    return getAllBySpotType;
+  }
+
+  async create(createFloorPlanDto: CreateFloorPlanDto): Promise<FloorPlan> {
     const user = this.userService.findOneById(createFloorPlanDto.modifiedBy);
     if (user) {
       const { name, imgUrl, locationId, modifiedBy } = createFloorPlanDto;
