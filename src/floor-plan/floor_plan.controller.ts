@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   ParseUUIDPipe,
+  Query,
 } from '@nestjs/common';
 import { FloorPlanService } from './floor_plan.service';
 import { CreateFloorPlanDto } from './dto/create-floor_plan.dto';
@@ -25,6 +26,18 @@ export class FloorPlanController {
   async findAll() {
     const floorPlans = await this.floorPlanService.findAll();
     return floorPlans;
+  }
+
+  @Get('/search')
+  async findAllBySpotTypeAndLocation(
+    @Query('spotTypeId') spotTypeId: string,
+    @Query('locationId')
+    locationId: string,
+  ) {
+    return await this.floorPlanService.findAllBySpotTypeAndLocationId(
+      spotTypeId,
+      locationId,
+    );
   }
 
   @Get(':id')
