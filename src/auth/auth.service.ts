@@ -45,6 +45,7 @@ export class AuthService {
 
   async signup(createUserDto: CreateUserDto) {
     const { email, password } = createUserDto;
+
     // Hash the users password
     // Generate a salt
     const salt = randomBytes(8).toString('hex');
