@@ -7,6 +7,7 @@ import { UserService } from 'src/user/user.service';
 import { CreateSpotsDto } from './dto/create-multiple-spots.dto';
 import { Reservation } from 'src/reservation/entities/reservation.entity';
 import { FloorPlan } from 'src/floor-plan/entities/floor_plan.entity';
+import { CreateSpotDto } from './dto/create-spot.dto';
 
 @Injectable()
 export class SpotService {
@@ -99,15 +100,13 @@ export class SpotService {
     await this.spotRepository.softRemove(spot);
     return { success: true, message: id };
   }
+
+  async checkSpot(createSpotDto: CreateSpotDto) {
+    const { modifiedBy } = createSpotDto;
+
+    await this.userService.findOneById(modifiedBy);
+    const spot = this.spotRepository.create(createSpotDto);
+
+    return spot;
+  }
 }
-
-// async create(createSpotDto: CreateSpotDto) {
-//   const { modifiedBy } = createSpotDto;
-
-//   await this.userService.findOneById(modifiedBy);
-
-//   const spot = this.spotRepository.create(createSpotDto);
-
-//   const createdSpot = await this.spotRepository.save(spot);
-//   return createdSpot;
-// }
