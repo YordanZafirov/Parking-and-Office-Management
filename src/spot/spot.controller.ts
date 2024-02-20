@@ -82,7 +82,7 @@ export class SpotController {
   }
 
   @Roles(UserRoles.ADMIN)
-  @Post()
+  @Post('/check')
   async check(@Body() createSpotDto: CreateSpotDto) {
     return await this.spotService.checkSpot(createSpotDto);
   }
