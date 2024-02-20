@@ -31,7 +31,7 @@ export class AuthService {
     if (storedHash !== hash.toString('hex')) {
       throw new BadRequestException('bad password');
     }
-    const payload = { sub: user.id, email: user.email, role: user.role };
+    const payload = { id: user.id, email: user.email, role: user.role };
     const partialUser = {
       id: user.id,
       email: user.email,
