@@ -55,6 +55,18 @@ export class ReservationController {
   ): Promise<Reservation[]> {
     return await this.reservationService.findAllFutureByUserId(userId);
   }
+  @Get('by-user-past/:userId')
+  async findAllPastByUser(
+    @Param('userId') userId: string,
+  ): Promise<Reservation[]> {
+    return await this.reservationService.findAllPastByUserId(userId);
+  }
+  @Get('by-user-current/:userId')
+  async findAllCurrentByUser(
+    @Param('userId') userId: string,
+  ): Promise<Reservation[]> {
+    return await this.reservationService.findAllCurrentByUserId(userId);
+  }
 
   @Post('create-multiple')
   async createMultiple(@Body() createReservationsDto: CreateReservationsDto) {

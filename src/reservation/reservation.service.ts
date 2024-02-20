@@ -7,7 +7,7 @@ import {
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { Reservation } from './entities/reservation.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MoreThanOrEqual, Repository } from 'typeorm';
+import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { UserService } from 'src/user/user.service';
 import { CreateReservationsDto } from './dto/create-multiple-reservations.dto';
 import { Spot } from 'src/spot/entities/spot.entity';
@@ -53,6 +53,9 @@ export class ReservationService {
     if (!condition) return null;
     const reservations = await this.reservationRepository.find({
       where: condition,
+      order: {
+        start: 'DESC',
+      },
     });
     return reservations;
   }
@@ -70,6 +73,23 @@ export class ReservationService {
     const currentDateTime = new Date();
     const reservations = await this.findAllByCondition({
       userId,
+      end: MoreThanOrEqual(currentDateTime),
+    });
+    return reservations;
+  }
+  async findAllPastByUserId(userId: string) {
+    const currentDateTime = new Date();
+    const reservations = await this.findAllByCondition({
+      userId,
+      end: LessThanOrEqual(currentDateTime),
+    });
+    return reservations;
+  }
+  async findAllCurrentByUserId(userId: string) {
+    const currentDateTime = new Date();
+    const reservations = await this.findAllByCondition({
+      userId,
+      start: LessThanOrEqual(currentDateTime),
       end: MoreThanOrEqual(currentDateTime),
     });
     return reservations;
