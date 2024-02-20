@@ -17,6 +17,7 @@ import { UserRoles } from 'src/user/user-role.enum';
 import { CreateSpotsDto } from './dto/create-multiple-spots.dto';
 import { FindFreeSpotsDto } from './dto/find-free-spots.dto';
 import { FindAllSpotsByTypeAndLocationDto } from './dto/find-all-spots-by-type-and-location.dto';
+import { CreateSpotDto } from './dto/create-spot.dto';
 
 @Controller('spot')
 @UseGuards(RolesGuard)
@@ -79,9 +80,10 @@ export class SpotController {
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     return await this.spotService.remove(id);
   }
+
+  @Roles(UserRoles.ADMIN)
+  @Post()
+  async check(@Body() createSpotDto: CreateSpotDto) {
+    return await this.spotService.checkSpot(createSpotDto);
+  }
 }
-// @Roles(UserRoles.ADMIN)
-// @Post()
-// async create(@Body() createSpotDto: CreateSpotDto) {
-//   return await this.spotService.create(createSpotDto);
-// }
