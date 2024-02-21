@@ -22,6 +22,9 @@ export class User {
   @Column({ type: 'enum', enum: UserRoles, default: UserRoles.EMPLOYEE })
   role: UserRoles;
 
+  @Column({ name: 'img_url', nullable: true })
+  imgUrl: string;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
