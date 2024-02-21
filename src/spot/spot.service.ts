@@ -48,6 +48,21 @@ export class SpotService {
 
     return spots;
   }
+
+  async findAllSpotsByTypeAndFloorPlan(
+    floorPlanId: string,
+    spotTypeId: string,
+  ): Promise<Spot[]> {
+    const spots = await this.spotRepository
+      .createQueryBuilder('spot')
+      .innerJoin(FloorPlan, 'floor_plan', 'spot.floor_plan_id = floor_plan.id')
+      .where('floor_plan.id = :floorPlanId', { floorPlanId })
+      .andWhere('spot.spot_type_id = :spotTypeId', { spotTypeId })
+      .getMany();
+
+    return spots;
+  }
+
   async findFreeSpotsByTypeAndLocationAndPeriod(
     locationId: string,
     spotTypeId: string,

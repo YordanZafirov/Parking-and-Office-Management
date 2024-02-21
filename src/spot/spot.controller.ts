@@ -18,6 +18,7 @@ import { CreateSpotsDto } from './dto/create-multiple-spots.dto';
 import { FindFreeSpotsDto } from './dto/find-free-spots.dto';
 import { FindAllSpotsByTypeAndLocationDto } from './dto/find-all-spots-by-type-and-location.dto';
 import { CreateSpotDto } from './dto/create-spot.dto';
+import { FindAllSpotsByTypeAndFloorPlanDto } from './dto/find-all-spots-by-type-and-floorplan.dto';
 
 @Controller('spot')
 @UseGuards(RolesGuard)
@@ -40,6 +41,19 @@ export class SpotController {
       spotTypeId,
     );
   }
+
+  @Get('by-type-and-floorplan-all')
+  async findAllSpotsByTypeAndFloorPlan(
+    @Body()
+    findAllSpotsByTypeAndFloorPlanDto: FindAllSpotsByTypeAndFloorPlanDto,
+  ) {
+    const { floorPlanId, spotTypeId } = findAllSpotsByTypeAndFloorPlanDto;
+    return await this.spotService.findAllSpotsByTypeAndFloorPlan(
+      floorPlanId,
+      spotTypeId,
+    );
+  }
+
   @Get('by-type-and-location-free')
   async findFreeSpotsByTypeAndLocationAndPeriod(
     @Body()
