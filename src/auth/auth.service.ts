@@ -45,11 +45,6 @@ export class AuthService {
 
   async signup(createUserDto: CreateUserDto) {
     const { email, password } = createUserDto;
-    // See if email is in use
-    const userByEmail = await this.userService.findOneByEmail(email);
-    if (userByEmail) {
-      throw new BadRequestException('email in use');
-    }
     // Hash the users password
     // Generate a salt
     const salt = randomBytes(8).toString('hex');
