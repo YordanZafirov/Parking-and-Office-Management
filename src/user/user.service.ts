@@ -40,11 +40,7 @@ export class UserService {
     return user;
   }
   async create(createUserDto: CreateUserDto) {
-    const { email, password } = createUserDto;
-    const user = this.userRepository.create({
-      email,
-      password,
-    });
+    const user = this.userRepository.create(createUserDto);
 
     const createdUser = await this.userRepository.save(user);
     return createdUser;
