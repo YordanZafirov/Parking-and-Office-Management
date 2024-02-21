@@ -44,7 +44,7 @@ export class AuthService {
   }
 
   async signup(createUserDto: CreateUserDto) {
-    const { email, password } = createUserDto;
+    const { email, password, modifiedBy } = createUserDto;
 
     // Hash the users password
     // Generate a salt
@@ -57,7 +57,11 @@ export class AuthService {
     const result = salt + '.' + hash.toString('hex');
 
     // Create a new user and save it
-    const user = await this.userService.create({ email, password: result });
+    const user = await this.userService.create({
+      email,
+      password: result,
+      modifiedBy,
+    });
 
     // return the user
     const { id, createdAt, updatedAt, deletedAt } = user;

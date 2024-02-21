@@ -4,7 +4,7 @@ import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { IsStrongPassword } from 'src/utils/decorators/user-data/password.decorator';
 
 export class UpdateUserDto extends PartialType(
-  OmitType(CreateUserDto, ['email'] as const),
+  OmitType(CreateUserDto, ['email', 'modifiedBy'] as const),
 ) {
   @IsStrongPassword()
   @IsNotEmpty()
