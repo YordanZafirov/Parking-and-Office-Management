@@ -9,7 +9,7 @@ import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { SignInDto } from 'src/user/dto/sign-in.dto';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
-import { UpdateUserDto } from 'src/user/dto/update-user.dto';
+import { UpdatePasswordDto } from 'src/user/dto/update-password.dto';
 
 const scrypt = promisify(_scrypt);
 
@@ -67,8 +67,8 @@ export class AuthService {
     const { id, createdAt, updatedAt, deletedAt } = user;
     return { id, email, createdAt, updatedAt, deletedAt };
   }
-  async changePassword(id: string, updateUserDto: UpdateUserDto) {
-    const { password, newPassword } = updateUserDto;
+  async changePassword(id: string, updatePasswordDto: UpdatePasswordDto) {
+    const { password, newPassword } = updatePasswordDto;
 
     // Find the user by id
     const user = await this.userService.findOneById(id);
@@ -85,8 +85,8 @@ export class AuthService {
     const newSalt = randomBytes(8).toString('hex');
     const newHash = (await scrypt(newPassword, newSalt, 32)) as Buffer;
     const newHashString = newSalt + '.' + newHash.toString('hex');
-    updateUserDto.password = newHashString;
-    await this.userService.update(id, updateUserDto);
+    updatePasswordDto.password = newHashString;
+    await this.userService.update(id, updatePasswordDto);
 
     return { message: 'Password updated successfully' };
   }
