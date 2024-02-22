@@ -16,8 +16,9 @@ import { Public } from 'src/utils/decorators/public/public.decorator';
 import { UserRoles } from './user-role.enum';
 import { SignInDto } from './dto/sign-in.dto';
 import { Roles } from 'src/utils/decorators/role/roles.decorator';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 import { RolesGuard } from 'src/utils/guards/roles.guard';
+import { UpdateProfilePictureDto } from './dto/update-profile-picture.dto';
 
 @Controller('user')
 @UseGuards(RolesGuard)
@@ -49,12 +50,22 @@ export class UserController {
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     return await this.userService.findOneById(id);
   }
-  @Patch(':id')
-  async update(
+  @Patch('change-password/:id')
+  async updatePassword(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateUserDto: UpdateUserDto,
+    @Body() updatePasswordDto: UpdatePasswordDto,
   ) {
-    return await this.authService.changePassword(id, updateUserDto);
+    return await this.authService.changePassword(id, updatePasswordDto);
+  }
+  @Patch('change-picture/:id')
+  async updateProfilePicture(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateProfilePictureDto: UpdateProfilePictureDto,
+  ) {
+    return await this.userService.updateProfilePicture(
+      id,
+      updateProfilePictureDto,
+    );
   }
 
   @Roles(UserRoles.ADMIN)
