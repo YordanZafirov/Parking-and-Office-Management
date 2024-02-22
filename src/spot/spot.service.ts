@@ -8,6 +8,9 @@ import { CreateSpotsDto } from './dto/create-multiple-spots.dto';
 import { Reservation } from 'src/reservation/entities/reservation.entity';
 import { FloorPlan } from 'src/floor-plan/entities/floor_plan.entity';
 import { CreateSpotDto } from './dto/create-spot.dto';
+import { LocationService } from 'src/location/location.service';
+import { FloorPlanService } from 'src/floor-plan/floor_plan.service';
+import { SpotTypeService } from 'src/spot-type/spot-type.service';
 
 @Injectable()
 export class SpotService {
@@ -15,6 +18,9 @@ export class SpotService {
     @InjectRepository(Spot)
     private readonly spotRepository: Repository<Spot>,
     private readonly userService: UserService,
+    private spotTypeService: SpotTypeService,
+    private locationService: LocationService,
+    private floorPlanService: FloorPlanService,
   ) {}
 
   async findAll() {
@@ -26,25 +32,35 @@ export class SpotService {
     if (!id) {
       return null;
     }
-    const spot = await this.spotRepository.findOne({
-      where: { id },
-    });
+    const spot = await this.spotRepository.findOneBy({ id });
     if (!spot) {
       throw new NotFoundException('Spot not found');
     }
     return spot;
   }
 
-  async findAllSpotsByTypeAndLocation(
+  async findAllSpotsByTypeAndLocationId(
     locationId: string,
     spotTypeId: string,
-  ): Promise<Spot[]> {
+  ) {
+    await this.locationService.findOne(locationId);
+    await this.spotTypeService.findOne(spotTypeId);
+
     const spots = await this.spotRepository
       .createQueryBuilder('spot')
-      .innerJoin(FloorPlan, 'floor_plan', 'spot.floor_plan_id = floor_plan.id')
-      .where('floor_plan.location_id = :locationId', { locationId })
+      .leftJoinAndSelect(
+        FloorPlan,
+        'floorPlan',
+        'spot.floor_plan_id = floorPlan.id',
+      )
+      .select('spot')
+      .where('floorPlan.location_id = :locationId', {
+        locationId,
+      })
       .andWhere('spot.spot_type_id = :spotTypeId', { spotTypeId })
       .getMany();
+
+    console.log(spots);
 
     return spots;
   }
@@ -52,11 +68,14 @@ export class SpotService {
   async findAllSpotsByTypeAndFloorPlan(
     floorPlanId: string,
     spotTypeId: string,
-  ): Promise<Spot[]> {
+  ) {
+    await this.floorPlanService.findOneById(floorPlanId);
+    await this.spotTypeService.findOne(spotTypeId);
+
     const spots = await this.spotRepository
       .createQueryBuilder('spot')
-      .innerJoin(FloorPlan, 'floor_plan', 'spot.floor_plan_id = floor_plan.id')
-      .where('floor_plan.id = :floorPlanId', { floorPlanId })
+      .select('spot')
+      .where('spot.floor_plan_id = :floorPlanId', { floorPlanId })
       .andWhere('spot.spot_type_id = :spotTypeId', { spotTypeId })
       .getMany();
 
@@ -68,7 +87,10 @@ export class SpotService {
     spotTypeId: string,
     startDateTime: Date,
     endDateTime: Date,
-  ): Promise<Spot[]> {
+  ) {
+    await this.locationService.findOne(locationId);
+    await this.spotTypeService.findOne(spotTypeId);
+
     const spots = await this.spotRepository
       .createQueryBuilder('spot')
       .innerJoin(FloorPlan, 'floor_plan', 'spot.floor_plan_id = floor_plan.id')

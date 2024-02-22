@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   ParseUUIDPipe,
+  Query,
 } from '@nestjs/common';
 import { SpotService } from './spot.service';
 import { UpdateSpotDto } from './dto/update-spot.dto';
@@ -15,10 +16,7 @@ import { RolesGuard } from 'src/utils/guards/roles.guard';
 import { Roles } from 'src/utils/decorators/role/roles.decorator';
 import { UserRoles } from 'src/user/user-role.enum';
 import { CreateSpotsDto } from './dto/create-multiple-spots.dto';
-import { FindFreeSpotsDto } from './dto/find-free-spots.dto';
-import { FindAllSpotsByTypeAndLocationDto } from './dto/find-all-spots-by-type-and-location.dto';
 import { CreateSpotDto } from './dto/create-spot.dto';
-import { FindAllSpotsByTypeAndFloorPlanDto } from './dto/find-all-spots-by-type-and-floorplan.dto';
 
 @Controller('spot')
 @UseGuards(RolesGuard)
@@ -30,37 +28,38 @@ export class SpotController {
     return await this.spotService.findAll();
   }
 
-  @Get('by-type-and-location-all')
+  @Get('by-location-and-type/search')
   async findAllSpotsByTypeAndLocation(
-    @Body()
-    findAllSpotsByTypeAndLocationDto: FindAllSpotsByTypeAndLocationDto,
+    @Query('locationId')
+    locationId: string,
+    @Query('spotTypeId') spotTypeId: string,
   ) {
-    const { locationId, spotTypeId } = findAllSpotsByTypeAndLocationDto;
-    return await this.spotService.findAllSpotsByTypeAndLocation(
+    return await this.spotService.findAllSpotsByTypeAndLocationId(
       locationId,
       spotTypeId,
     );
   }
 
-  @Get('by-type-and-floorplan-all')
+  @Get('by-type-and-floorplan/search')
   async findAllSpotsByTypeAndFloorPlan(
-    @Body()
-    findAllSpotsByTypeAndFloorPlanDto: FindAllSpotsByTypeAndFloorPlanDto,
+    @Query('floorPlanId')
+    floorPlanId: string,
+    @Query('spotTypeId') spotTypeId: string,
   ) {
-    const { floorPlanId, spotTypeId } = findAllSpotsByTypeAndFloorPlanDto;
     return await this.spotService.findAllSpotsByTypeAndFloorPlan(
       floorPlanId,
       spotTypeId,
     );
   }
 
-  @Get('by-type-and-location-free')
+  @Get('by-type-and-location-free/search')
   async findFreeSpotsByTypeAndLocationAndPeriod(
-    @Body()
-    findFreeSpotsDto: FindFreeSpotsDto,
+    @Query('locationId')
+    locationId: string,
+    @Query('spotTypeId') spotTypeId: string,
+    @Query('startDateTime') startDateTime: Date,
+    @Query('endDateTime') endDateTime: Date,
   ) {
-    const { locationId, spotTypeId, startDateTime, endDateTime } =
-      findFreeSpotsDto;
     return await this.spotService.findFreeSpotsByTypeAndLocationAndPeriod(
       locationId,
       spotTypeId,

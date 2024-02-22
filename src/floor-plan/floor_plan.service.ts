@@ -22,7 +22,7 @@ export class FloorPlanService {
     private floorPlanRepository: Repository<FloorPlan>,
     private userService: UserService,
     private spotTypeService: SpotTypeService,
-    private locaitonService: LocationService,
+    private locationService: LocationService,
   ) {}
 
   async findAll() {
@@ -43,7 +43,7 @@ export class FloorPlanService {
 
   async findAllBySpotTypeAndLocationId(spotTypeId: string, locationId: string) {
     const spotType = await this.spotTypeService.findOne(spotTypeId);
-    const location = await this.locaitonService.findOne(locationId);
+    const location = await this.locationService.findOne(locationId);
     const getAllBySpotType = this.floorPlanRepository
       .createQueryBuilder('floorPlan')
       .leftJoinAndSelect(
