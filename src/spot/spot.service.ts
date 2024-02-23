@@ -83,24 +83,31 @@ export class SpotService {
   }
 
   async findFreeSpotsByTypeAndLocationAndPeriod(
-    locationId: string,
+    floorPlanId: string,
     spotTypeId: string,
     startDateTime: Date,
     endDateTime: Date,
   ) {
-    await this.locationService.findOne(locationId);
+    await this.floorPlanService.findOneById(floorPlanId);
     await this.spotTypeService.findOne(spotTypeId);
 
     const spots = await this.spotRepository
       .createQueryBuilder('spot')
-      .innerJoin(FloorPlan, 'floor_plan', 'spot.floor_plan_id = floor_plan.id')
-      .innerJoin(Reservation, 'r', 'r.spot_id = spot.id')
-      .where('floor_plan.location_id = :locationId', { locationId })
+      .leftJoinAndSelect(
+        FloorPlan,
+        'floor_plan',
+        'spot.floor_plan_id = floor_plan.id',
+      )
+      .leftJoinAndSelect(Reservation, 'r', 'r.spot_id = spot.id')
+      .where('floor_plan.id = :floorPlanId', { floorPlanId })
       .andWhere('spot.spot_type_id = :spotTypeId', { spotTypeId })
-      .andWhere('(r.start > :endDateTime OR r.end < :startDateTime)', {
-        endDateTime,
-        startDateTime,
-      })
+      .andWhere(
+        '(r.start > :endDateTime OR r.end < :startDateTime OR r IS NULL)',
+        {
+          endDateTime,
+          startDateTime,
+        },
+      )
       .getMany();
 
     return spots;
