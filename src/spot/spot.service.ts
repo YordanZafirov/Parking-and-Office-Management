@@ -91,6 +91,7 @@ export class SpotService {
     await this.floorPlanService.findOneById(floorPlanId);
     await this.spotTypeService.findOne(spotTypeId);
 
+    console.log(startDateTime, endDateTime);
     const spots = await this.spotRepository
       .createQueryBuilder('spot')
       .leftJoinAndSelect(
@@ -101,16 +102,114 @@ export class SpotService {
       .leftJoinAndSelect(Reservation, 'r', 'r.spot_id = spot.id')
       .where('floor_plan.id = :floorPlanId', { floorPlanId })
       .andWhere('spot.spot_type_id = :spotTypeId', { spotTypeId })
-      .andWhere(
-        '(r.start > :endDateTime OR r.end < :startDateTime OR r IS NULL)',
-        {
-          endDateTime,
-          startDateTime,
-        },
-      )
+      .andWhere((qb) => {
+        const subQuery = qb
+          .subQuery()
+          .select('1')
+          .from('reservation', 'r')
+          .where('r.spot_id = spot.id')
+          .andWhere(
+            '(r.start BETWEEN :startDateTime AND :endDateTime OR r.end BETWEEN :startDateTime AND :endDateTime)',
+          )
+          .getQuery();
+        return `NOT EXISTS (${subQuery})`;
+      })
+      .setParameters({
+        startDateTime,
+        endDateTime,
+      })
       .getMany();
+    console.log(spots);
 
     return spots;
+  }
+  async countAllSpotsByTypeAndLocationId(
+    locationId: string,
+    spotTypeId: string,
+  ) {
+    await this.locationService.findOne(locationId);
+    await this.spotTypeService.findOne(spotTypeId);
+
+    const count = await this.spotRepository
+      .createQueryBuilder('spot')
+      .leftJoinAndSelect(
+        FloorPlan,
+        'floorPlan',
+        'spot.floor_plan_id = floorPlan.id',
+      )
+      .select('spot')
+      .where('floorPlan.location_id = :locationId', {
+        locationId,
+      })
+      .andWhere('spot.spot_type_id = :spotTypeId', { spotTypeId })
+      .getCount();
+
+    console.log(count);
+
+    return count;
+  }
+
+  async countFreeSpotsByTypeAndLocationAndPeriod(
+    locationId: string,
+    spotTypeId: string,
+    startDateTime: Date,
+    endDateTime: Date,
+  ) {
+    await this.locationService.findOne(locationId);
+    await this.spotTypeService.findOne(spotTypeId);
+
+    const freeSpotsCount = await this.spotRepository
+      .createQueryBuilder('spot')
+      .leftJoinAndSelect(
+        FloorPlan,
+        'floor_plan',
+        'spot.floor_plan_id = floor_plan.id',
+      )
+      .leftJoinAndSelect(Reservation, 'r', 'r.spot_id = spot.id')
+      .where('floor_plan.location_id = :locationId', { locationId })
+      .andWhere('spot.spot_type_id = :spotTypeId', { spotTypeId })
+      .andWhere((qb) => {
+        const subQuery = qb
+          .subQuery()
+          .select('1')
+          .from('reservation', 'r')
+          .where('r.spot_id = spot.id')
+          .andWhere(
+            '(r.start BETWEEN :startDateTime AND :endDateTime OR r.end BETWEEN :startDateTime AND :endDateTime)',
+          )
+          .getQuery();
+        return `NOT EXISTS (${subQuery})`;
+      })
+      .setParameters({
+        startDateTime,
+        endDateTime,
+      })
+      .getCount();
+
+    console.log(freeSpotsCount);
+    return freeSpotsCount;
+  }
+
+  async getOccupancyPercentageByLocationAndTypeAndPeriod(
+    locationId: string,
+    spotTypeId: string,
+    startDateTime: Date,
+    endDateTime: Date,
+  ) {
+    const allSpots = await this.countAllSpotsByTypeAndLocationId(
+      locationId,
+      spotTypeId,
+    );
+    const freeSpots = await this.countFreeSpotsByTypeAndLocationAndPeriod(
+      locationId,
+      spotTypeId,
+      startDateTime,
+      endDateTime,
+    );
+
+    const percentage = ((allSpots - freeSpots) / allSpots) * 100;
+    console.log({ percentage });
+    return percentage;
   }
 
   async createMultiple(createSpotsDto: CreateSpotsDto) {
