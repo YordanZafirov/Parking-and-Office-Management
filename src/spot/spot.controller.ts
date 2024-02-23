@@ -67,6 +67,21 @@ export class SpotController {
       endDateTime,
     );
   }
+  @Get('by-type-and-location-occupancy/search')
+  async getOccupancyPercentageByLocationAndTypeAndPeriod(
+    @Query('locationId')
+    locationId: string,
+    @Query('spotTypeId') spotTypeId: string,
+    @Query('startDateTime') startDateTime: Date,
+    @Query('endDateTime') endDateTime: Date,
+  ) {
+    return await this.spotService.getOccupancyPercentageByLocationAndTypeAndPeriod(
+      locationId,
+      spotTypeId,
+      startDateTime,
+      endDateTime,
+    );
+  }
 
   @Get(':id')
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
