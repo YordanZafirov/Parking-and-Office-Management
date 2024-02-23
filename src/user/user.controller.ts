@@ -48,7 +48,9 @@ export class UserController {
   @Roles(UserRoles.ADMIN)
   @Get(':id')
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return await this.userService.findOneById(id);
+    const user = await this.userService.findOneById(id);
+    const { email, imgUrl, role } = user;
+    return { id, email, imgUrl, role };
   }
   @Patch('change-password/:id')
   async updatePassword(
