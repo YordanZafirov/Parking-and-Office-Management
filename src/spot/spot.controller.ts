@@ -54,14 +54,14 @@ export class SpotController {
 
   @Get('by-type-and-location-free/search')
   async findFreeSpotsByTypeAndLocationAndPeriod(
-    @Query('locationId')
-    locationId: string,
+    @Query('floorPlanId')
+    floorPlanId: string,
     @Query('spotTypeId') spotTypeId: string,
     @Query('startDateTime') startDateTime: Date,
     @Query('endDateTime') endDateTime: Date,
   ) {
     return await this.spotService.findFreeSpotsByTypeAndLocationAndPeriod(
-      locationId,
+      floorPlanId,
       spotTypeId,
       startDateTime,
       endDateTime,

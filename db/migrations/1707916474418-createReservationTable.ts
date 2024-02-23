@@ -20,11 +20,11 @@ export class CreateReservationTable1707836062685 implements MigrationInterface {
           },
           {
             name: 'start',
-            type: 'timestamp',
+            type: 'timestamp with time zone',
           },
           {
             name: 'end',
-            type: 'timestamp',
+            type: 'timestamp with time zone',
           },
           {
             name: 'comment',

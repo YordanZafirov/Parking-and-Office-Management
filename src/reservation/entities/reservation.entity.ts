@@ -13,10 +13,10 @@ export class Reservation {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: false })
+  @Column({ type: 'timestamptz', nullable: false })
   start: Date;
 
-  @Column({ nullable: false })
+  @Column({ type: 'timestamptz', nullable: false })
   end: Date;
 
   @IsNotEmpty()

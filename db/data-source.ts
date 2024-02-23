@@ -11,6 +11,9 @@ export const dataSourceOptions: DataSourceOptions = {
   database: process.env.DB_NAME,
   entities: ['dist/**/*.entity.js'],
   migrations: ['dist/db/migrations/*.js'],
+  extra: {
+    timezone: 'local',
+  },
 };
 
 const dataSource = new DataSource(dataSourceOptions);
