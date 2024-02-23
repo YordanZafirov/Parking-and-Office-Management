@@ -51,7 +51,8 @@ export class UserService {
     const user = await this.findOneById(id);
 
     Object.assign(user, updatePasswordDto);
-    return this.userRepository.save(user);
+    const result = await this.userRepository.save(user);
+    return result;
   }
   async updateProfilePicture(
     id: string,
@@ -59,7 +60,8 @@ export class UserService {
   ) {
     const user = await this.findOneById(id);
     Object.assign(user, updateProfilePictureDto);
-    return this.userRepository.save(user);
+    await this.userRepository.save(user);
+    return { message: 'Profile picture updated successfully' };
   }
 
   async remove(id: string) {
