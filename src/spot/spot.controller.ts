@@ -83,6 +83,22 @@ export class SpotController {
     );
   }
 
+  @Get('by-type-and-floor-plan-combination/search')
+  async alaBala(
+    @Query('floorPlanId')
+    floorPlanId: string,
+    @Query('spotTypeId') spotTypeId: string,
+    @Query('startDateTime') startDateTime: Date,
+    @Query('endDateTime') endDateTime: Date,
+  ) {
+    return await this.spotService.findFreeSpotsCombinationByTypeAndFloorPlanAndPeriod(
+      floorPlanId,
+      spotTypeId,
+      startDateTime,
+      endDateTime,
+    );
+  }
+
   @Get(':id')
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     return await this.spotService.findOne(id);
