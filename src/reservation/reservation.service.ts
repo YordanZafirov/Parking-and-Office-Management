@@ -192,11 +192,14 @@ export class ReservationService {
       const dtoEnd = new Date(dtoRe.end);
 
       if (
-        (dtoStart.getTime() >= reStart.getTime() &&
-          dtoStart.getTime() <= reEnd.getTime() &&
+        (dtoStart.getTime() > reStart.getTime() &&
+          dtoStart.getTime() < reEnd.getTime() &&
           dtoSpot.spotTypeId === reSpot.spotTypeId) ||
-        (dtoEnd.getTime() >= reStart.getTime() &&
-          dtoEnd.getTime() <= reEnd.getTime() &&
+        (dtoEnd.getTime() > reStart.getTime() &&
+          dtoEnd.getTime() < reEnd.getTime() &&
+          dtoSpot.spotTypeId === reSpot.spotTypeId) ||
+        (dtoEnd.getTime() === reStart.getTime() &&
+          dtoEnd.getTime() === reEnd.getTime() &&
           dtoSpot.spotTypeId === reSpot.spotTypeId)
       ) {
         throw new BadRequestException(
@@ -217,10 +220,12 @@ export class ReservationService {
       const dtoEnd = new Date(dtoRe.end);
 
       if (
-        (dtoStart.getTime() >= reStart.getTime() &&
-          dtoStart.getTime() <= reEnd.getTime()) ||
-        (dtoEnd.getTime() >= reStart.getTime() &&
-          dtoEnd.getTime() <= reEnd.getTime())
+        (dtoStart.getTime() > reStart.getTime() &&
+          dtoStart.getTime() < reEnd.getTime()) ||
+        (dtoEnd.getTime() > reStart.getTime() &&
+          dtoEnd.getTime() < reEnd.getTime()) ||
+        (dtoEnd.getTime() === reStart.getTime() &&
+          dtoEnd.getTime() === reEnd.getTime())
       ) {
         throw new BadRequestException(
           'This spot is already reserved for that period',
