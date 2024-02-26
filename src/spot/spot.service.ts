@@ -117,8 +117,8 @@ export class SpotService {
         startDateTime,
         endDateTime,
       })
+      .andWhere('spot.is_permanent = false')
       .getMany();
-
     return spots;
   }
 
@@ -161,7 +161,7 @@ export class SpotService {
           endDateForDay,
         );
         // If there is no spot for one of the days - return
-        if (!spots) {
+        if (spots.length === 0) {
           throw new NotFoundException(
             'Sorry, there are no free spots for that period of time',
           );
