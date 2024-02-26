@@ -118,6 +118,32 @@ export class ReservationService {
     }
     return existingReservation;
   }
+  async checkReservation(createReservationDto: CreateReservationDto) {
+    await this.userService.findOneById(createReservationDto.modifiedBy);
+
+    const spot = await this.spotService.findOne(createReservationDto.spotId);
+    await this.checkIfSpotIsPermanent(spot);
+    const existingSpotReservations = await this.findAllBySpotId(
+      createReservationDto.spotId,
+    );
+    await this.checkIfSpotHasReservation(
+      createReservationDto,
+      existingSpotReservations,
+    );
+    const existingUserReservations = await this.findAllCurrentAndFutureByUserId(
+      createReservationDto.userId,
+    );
+    await this.checkIfUserHasReservation(
+      spot,
+      createReservationDto,
+      existingUserReservations,
+    );
+
+    const newReservation =
+      this.reservationRepository.create(createReservationDto);
+
+    return newReservation;
+  }
   async createMultiple(createReservationsDto: CreateReservationsDto) {
     const reservations = [];
     const { modifiedBy } = createReservationsDto.reservations[0];
@@ -240,41 +266,3 @@ export class ReservationService {
     }
   }
 }
-// async create(
-//   createReservationDto: CreateReservationDto,
-// ): Promise<Reservation> {
-//   await this.userService.findOneById(createReservationDto.modifiedBy);
-
-//   const spot = await this.spotService.findOne(createReservationDto.spotId);
-//   if (spot.isPermanent) {
-//     throw new BadRequestException('This spot is marked as permanently used');
-//   }
-//   const existingSpotReservations = await this.findAllBySpotId(
-//     createReservationDto.spotId,
-//   );
-
-//   for (const re of existingSpotReservations) {
-//     const reStart = new Date(re.start);
-//     const reEnd = new Date(re.end);
-//     const dtoStart = new Date(createReservationDto.start);
-//     const dtoEnd = new Date(createReservationDto.end);
-
-//     if (
-//       (dtoStart.getTime() >= reStart.getTime() &&
-//         dtoStart.getTime() <= reEnd.getTime()) ||
-//       (dtoEnd.getTime() >= reStart.getTime() &&
-//         dtoEnd.getTime() <= reEnd.getTime())
-//     ) {
-//       throw new BadRequestException(
-//         'Reservation in this period already exists',
-//       );
-//     }
-//   }
-
-//   const newReservation =
-//     this.reservationRepository.create(createReservationDto);
-
-//   const createdReservation =
-//     await this.reservationRepository.save(newReservation);
-//   return createdReservation;
-// }
