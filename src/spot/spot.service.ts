@@ -91,7 +91,6 @@ export class SpotService {
     await this.floorPlanService.findOneById(floorPlanId);
     await this.spotTypeService.findOne(spotTypeId);
 
-    console.log(startDateTime, endDateTime);
     const spots = await this.spotRepository
       .createQueryBuilder('spot')
       .leftJoinAndSelect(
@@ -109,7 +108,7 @@ export class SpotService {
           .from('reservation', 'r')
           .where('r.spot_id = spot.id')
           .andWhere(
-            '(r.start BETWEEN :startDateTime AND :endDateTime OR r.end BETWEEN :startDateTime AND :endDateTime)',
+            '(r.start BETWEEN :startDateTime AND :endDateTime OR r.end BETWEEN :startDateTime AND :endDateTime OR (r.start = :startDateTime AND r.end = :endDateTime))',
           )
           .getQuery();
         return `NOT EXISTS (${subQuery})`;
@@ -118,11 +117,101 @@ export class SpotService {
         startDateTime,
         endDateTime,
       })
+      .andWhere('spot.is_permanent = false')
       .getMany();
-    console.log(spots);
-
     return spots;
   }
+
+  async findFreeSpotsCombinationByTypeAndFloorPlanAndPeriod(
+    floorPlanId: string,
+    spotTypeId: string,
+    startDateTime: Date,
+    endDateTime: Date,
+  ) {
+    await this.floorPlanService.findOneById(floorPlanId);
+    const spotType = await this.spotTypeService.findOne(spotTypeId);
+    // Here we collect the periods for available spots
+    const daysWithFreeSpot = [];
+    // Each period, before it is pushed to the main array, is being collected here
+    const currentSpotWithDates = [];
+    if (spotType.name === 'Office desk' || spotType.name === 'Parking place') {
+      // We take the whole period and check for each day of it
+      const currentDate = new Date(startDateTime);
+      const endDate = new Date(endDateTime);
+      // If it is only one day -> return, because we have already checked for one day
+      const startDateTimeNext = new Date(startDateTime);
+      startDateTimeNext.setDate(startDateTimeNext.getDate() + 1);
+      if (startDateTimeNext.getTime() >= endDate.getTime()) {
+        throw new NotFoundException(
+          'Sorry, there are no free spots for that period of time',
+        );
+      }
+      let counter = 0;
+      // foreach day
+      while (currentDate.getTime() <= endDate.getTime()) {
+        counter++;
+        // end date for each day is the current date + 1 day
+        const endDateForDay = new Date(currentDate);
+        endDateForDay.setDate(endDateForDay.getDate() + 1);
+        // get the spots for that day
+        const spots = await this.findFreeSpotsByTypeAndLocationAndPeriod(
+          floorPlanId,
+          spotTypeId,
+          currentDate,
+          endDateForDay,
+        );
+        // If there is no spot for one of the days - return
+        if (spots.length === 0) {
+          throw new NotFoundException(
+            'Sorry, there are no free spots for that period of time',
+          );
+        }
+        // If it is the first iteration just add to currentSpot
+        if (counter === 1) {
+          currentSpotWithDates.push({
+            start: new Date(currentDate),
+            end: new Date(endDateForDay),
+            spot: spots[0],
+          });
+        } else {
+          // if the spot for the next day is the same, just extend the current period
+          if (spots[0].id === currentSpotWithDates[0].spot.id) {
+            currentSpotWithDates[0].end = new Date(endDateForDay);
+          } else {
+            // else, push the period and start new one
+            daysWithFreeSpot.push({
+              start: currentSpotWithDates[0].start,
+              end: currentSpotWithDates[0].end,
+              spot: currentSpotWithDates[0].spot,
+            });
+            currentSpotWithDates[0].start = new Date(currentDate);
+            currentSpotWithDates[0].end = new Date(endDateForDay);
+            currentSpotWithDates[0].spot = spots[0];
+          }
+        }
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+      if (currentSpotWithDates) {
+        daysWithFreeSpot.push({
+          start: currentSpotWithDates[0].start,
+          end: currentSpotWithDates[0].end,
+          spot: currentSpotWithDates[0].spot,
+        });
+      }
+      console.log(daysWithFreeSpot);
+    }
+    if (
+      spotType.name === 'Phone booth' ||
+      spotType.name === 'Conference room'
+    ) {
+      throw new NotFoundException(
+        'Sorry, there are no free spots for that period of time',
+      );
+    }
+
+    return daysWithFreeSpot;
+  }
+
   async countAllSpotsByTypeAndLocationId(
     locationId: string,
     spotTypeId: string,
