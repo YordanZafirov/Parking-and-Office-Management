@@ -1,3 +1,4 @@
+import { FloorPlanService } from './../floor-plan/floor_plan.service';
 import { SpotService } from './../spot/spot.service';
 import {
   BadRequestException,
@@ -19,6 +20,7 @@ export class ReservationService {
     private reservationRepository: Repository<Reservation>,
     private userService: UserService,
     private spotService: SpotService,
+    private floorPlanService: FloorPlanService,
   ) {}
 
   async findAll() {
@@ -154,6 +156,7 @@ export class ReservationService {
       await this.checkIfSpotIsPermanent(dtoSpot);
 
       const existingSpotReservations = await this.findAllBySpotId(dtoRe.spotId);
+      console.log(existingSpotReservations);
       await this.checkIfSpotHasReservation(dtoRe, existingSpotReservations);
 
       const existingUserReservations =
@@ -216,17 +219,26 @@ export class ReservationService {
       const reEnd = new Date(re.end);
       const dtoStart = new Date(dtoRe.start);
       const dtoEnd = new Date(dtoRe.end);
+      const reFloorPlan = await this.floorPlanService.findOneById(
+        reSpot.floorPlanId,
+      );
+      const dtoFloorPlan = await this.floorPlanService.findOneById(
+        dtoSpot.floorPlanId,
+      );
 
       if (
         (dtoStart.getTime() > reStart.getTime() &&
           dtoStart.getTime() < reEnd.getTime() &&
-          dtoSpot.spotTypeId === reSpot.spotTypeId) ||
+          (dtoSpot.spotTypeId === reSpot.spotTypeId ||
+            reFloorPlan.locationId !== dtoFloorPlan.locationId)) ||
         (dtoEnd.getTime() > reStart.getTime() &&
           dtoEnd.getTime() < reEnd.getTime() &&
-          dtoSpot.spotTypeId === reSpot.spotTypeId) ||
-        (dtoEnd.getTime() === reStart.getTime() &&
+          (dtoSpot.spotTypeId === reSpot.spotTypeId ||
+            reFloorPlan.locationId !== dtoFloorPlan.locationId)) ||
+        (dtoStart.getTime() === reStart.getTime() &&
           dtoEnd.getTime() === reEnd.getTime() &&
-          dtoSpot.spotTypeId === reSpot.spotTypeId)
+          (dtoSpot.spotTypeId === reSpot.spotTypeId ||
+            reFloorPlan.locationId !== dtoFloorPlan.locationId))
       ) {
         throw new BadRequestException(
           'This user already has reservation for that period',
@@ -250,7 +262,7 @@ export class ReservationService {
           dtoStart.getTime() < reEnd.getTime()) ||
         (dtoEnd.getTime() > reStart.getTime() &&
           dtoEnd.getTime() < reEnd.getTime()) ||
-        (dtoEnd.getTime() === reStart.getTime() &&
+        (dtoStart.getTime() === reStart.getTime() &&
           dtoEnd.getTime() === reEnd.getTime())
       ) {
         throw new BadRequestException(
