@@ -84,7 +84,7 @@ export class SpotController {
   }
 
   @Get('by-type-and-floor-plan-combination/search')
-  async alaBala(
+  async findFreeSpotsCombinationByTypeAndFloorPlanAndPeriod(
     @Query('floorPlanId')
     floorPlanId: string,
     @Query('spotTypeId') spotTypeId: string,
