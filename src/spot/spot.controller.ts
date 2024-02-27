@@ -28,6 +28,14 @@ export class SpotController {
     return await this.spotService.findAll();
   }
 
+  @Get('by-floorPlan')
+  async findByFloorPlanId(
+    @Query('floorPlanId')
+    floorPlanId: string,
+  ) {
+    return await this.spotService.findAllSpotsByFloorPlanId(floorPlanId);
+  }
+
   @Get('by-location-and-type/search')
   async findAllSpotsByTypeAndLocation(
     @Query('locationId')

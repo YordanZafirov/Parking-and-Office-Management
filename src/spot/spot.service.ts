@@ -39,6 +39,18 @@ export class SpotService {
     return spot;
   }
 
+  async findAllSpotsByFloorPlanId(floorPlanId: string) {
+    await this.floorPlanService.findOneById(floorPlanId);
+
+    const spots = await this.spotRepository.find({
+      where: { floorPlanId: floorPlanId },
+    });
+
+    console.log(spots);
+
+    return spots;
+  }
+
   async findAllSpotsByTypeAndLocationId(
     locationId: string,
     spotTypeId: string,
