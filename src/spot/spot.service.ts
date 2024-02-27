@@ -264,7 +264,7 @@ export class SpotService {
           .from('reservation', 'r')
           .where('r.spot_id = spot.id')
           .andWhere(
-            '(r.start BETWEEN :startDateTime AND :endDateTime OR r.end BETWEEN :startDateTime AND :endDateTime)',
+            '(r.start BETWEEN :startDateTime AND :endDateTime OR r.end BETWEEN :startDateTime AND :endDateTime OR (r.start = :startDateTime AND r.end = :endDateTime))',
           )
           .getQuery();
         return `NOT EXISTS (${subQuery})`;
@@ -273,6 +273,7 @@ export class SpotService {
         startDateTime,
         endDateTime,
       })
+      .andWhere('spot.is_permanent = false')
       .getCount();
 
     console.log(freeSpotsCount);
