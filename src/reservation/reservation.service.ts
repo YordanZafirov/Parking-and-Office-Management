@@ -98,10 +98,12 @@ export class ReservationService {
   }
   async findAllFutureByUserId(userId: string) {
     const currentDateTime = new Date();
-    const reservations = await this.findAllByCondition({
-      userId,
-      start: MoreThanOrEqual(currentDateTime),
-    });
+    const reservations = await this.reservationRepository
+      .createQueryBuilder('reservation')
+      .where('reservation.userId = :userId', { userId })
+      .andWhere('reservation.start >= :currentDateTime', { currentDateTime })
+      .orderBy('reservation.start', 'ASC')
+      .getMany();
     return reservations;
   }
   async findAllByUserId(userId: string) {
