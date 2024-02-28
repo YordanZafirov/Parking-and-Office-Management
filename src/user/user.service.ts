@@ -15,15 +15,12 @@ export class UserService {
   async findAll() {
     const users = await this.userRepository
       .createQueryBuilder('user')
-      .orderBy('user.role', 'ASC') // DESC for 'admin' first, ASC for 'admin' last
+      .orderBy('user.role', 'ASC')
       .getMany();
     return users;
   }
 
   async findOneById(id: string) {
-    if (!id) {
-      return null;
-    }
     const user = await this.userRepository.findOne({
       where: { id },
     });
@@ -34,9 +31,6 @@ export class UserService {
   }
 
   async findOneByEmail(email: string) {
-    if (!email) {
-      return null;
-    }
     const user = await this.userRepository.findOne({ where: { email } });
     if (!user) {
       throw new NotFoundException("User doesn't exist");
