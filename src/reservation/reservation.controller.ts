@@ -14,8 +14,6 @@ import { RolesGuard } from 'src/utils/guards/roles.guard';
 import { Reservation } from './entities/reservation.entity';
 import { CreateReservationsDto } from './dto/create-multiple-reservations.dto';
 import { CreateReservationDto } from './dto/create-reservation.dto';
-import { UserRoles } from 'src/user/user-role.enum';
-import { Roles } from 'src/utils/decorators/role/roles.decorator';
 
 @Controller('reservation')
 @UseGuards(RolesGuard)
