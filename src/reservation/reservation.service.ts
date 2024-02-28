@@ -196,7 +196,7 @@ export class ReservationService {
     }
   }
 
-  async softDelete(id: string): Promise<string> {
+  async softDelete(id: string) {
     const existingReservation = await this.reservationRepository.findOneBy({
       id,
     });
@@ -207,7 +207,7 @@ export class ReservationService {
 
     await this.reservationRepository.softDelete({ id });
 
-    return id;
+    return { id };
   }
 
   async checkIfUserHasReservation(

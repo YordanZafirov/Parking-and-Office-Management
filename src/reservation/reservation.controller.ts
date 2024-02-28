@@ -14,8 +14,6 @@ import { RolesGuard } from 'src/utils/guards/roles.guard';
 import { Reservation } from './entities/reservation.entity';
 import { CreateReservationsDto } from './dto/create-multiple-reservations.dto';
 import { CreateReservationDto } from './dto/create-reservation.dto';
-import { UserRoles } from 'src/user/user-role.enum';
-import { Roles } from 'src/utils/decorators/role/roles.decorator';
 
 @Controller('reservation')
 @UseGuards(RolesGuard)
@@ -71,20 +69,18 @@ export class ReservationController {
     return await this.reservationService.findAllCurrentByUserId(userId);
   }
 
-  @Roles(UserRoles.ADMIN)
   @Post('check')
   async check(@Body() createReservationDto: CreateReservationDto) {
     return await this.reservationService.checkReservation(createReservationDto);
   }
-  @Roles(UserRoles.ADMIN)
+
   @Post('create-multiple')
   async createMultiple(@Body() createReservationsDto: CreateReservationsDto) {
     return await this.reservationService.createMultiple(createReservationsDto);
   }
 
-  @Roles(UserRoles.ADMIN)
   @Delete(':id')
-  async delete(@Param('id', ParseUUIDPipe) id: string): Promise<string> {
+  async delete(@Param('id', ParseUUIDPipe) id: string) {
     return this.reservationService.softDelete(id);
   }
 }
