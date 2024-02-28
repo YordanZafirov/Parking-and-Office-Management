@@ -80,7 +80,7 @@ export class ReservationController {
   }
 
   @Delete(':id')
-  async delete(@Param('id', ParseUUIDPipe) id: string): Promise<string> {
+  async delete(@Param('id', ParseUUIDPipe) id: string) {
     return this.reservationService.softDelete(id);
   }
 }
