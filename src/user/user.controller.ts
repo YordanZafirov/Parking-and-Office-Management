@@ -45,7 +45,6 @@ export class UserController {
     return await this.userService.findAll();
   }
 
-  @Roles(UserRoles.ADMIN)
   @Get(':id')
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     const user = await this.userService.findOneById(id);
