@@ -71,18 +71,16 @@ export class ReservationController {
     return await this.reservationService.findAllCurrentByUserId(userId);
   }
 
-  @Roles(UserRoles.ADMIN)
   @Post('check')
   async check(@Body() createReservationDto: CreateReservationDto) {
     return await this.reservationService.checkReservation(createReservationDto);
   }
-  @Roles(UserRoles.ADMIN)
+
   @Post('create-multiple')
   async createMultiple(@Body() createReservationsDto: CreateReservationsDto) {
     return await this.reservationService.createMultiple(createReservationsDto);
   }
 
-  @Roles(UserRoles.ADMIN)
   @Delete(':id')
   async delete(@Param('id', ParseUUIDPipe) id: string): Promise<string> {
     return this.reservationService.softDelete(id);
