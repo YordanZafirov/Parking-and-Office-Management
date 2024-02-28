@@ -46,31 +46,24 @@ export class AuthService {
   async signup(createUserDto: CreateUserDto) {
     const { email, password, modifiedBy } = createUserDto;
 
-    // Hash the users password
-    // Generate a salt
     const salt = randomBytes(8).toString('hex');
 
-    // Hash the salt and the password together
     const hash = (await scrypt(password, salt, 32)) as Buffer;
 
-    // Join the hashed result and the salt together
     const result = salt + '.' + hash.toString('hex');
 
-    // Create a new user and save it
     const user = await this.userService.create({
       email,
       password: result,
       modifiedBy,
     });
 
-    // return the user
     const { id, createdAt, updatedAt, deletedAt } = user;
     return { id, email, createdAt, updatedAt, deletedAt };
   }
   async changePassword(id: string, updatePasswordDto: UpdatePasswordDto) {
     const { password, newPassword } = updatePasswordDto;
 
-    // Find the user by id
     const user = await this.userService.findOneById(id);
     if (!user) {
       throw new NotFoundException('User not found');
