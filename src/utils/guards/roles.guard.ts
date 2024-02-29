@@ -13,7 +13,7 @@ export class RolesGuard implements CanActivate {
       context.getHandler(),
     );
     if (isPublic) {
-      return true; // Skip authentication for public routes
+      return true;
     }
 
     const requiredRoles = this.reflector.getAllAndOverride<UserRoles[]>(
