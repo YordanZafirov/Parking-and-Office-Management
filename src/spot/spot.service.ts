@@ -120,7 +120,10 @@ export class SpotService {
           .from('reservation', 'r')
           .where('r.spot_id = spot.id')
           .andWhere(
-            '(r.start BETWEEN :startDateTime AND :endDateTime OR r.end BETWEEN :startDateTime AND :endDateTime OR (r.start = :startDateTime AND r.end = :endDateTime))',
+            '((r.start > :startDateTime AND r.start < :endDateTime) OR ' +
+              '(r.end > :startDateTime AND r.end < :endDateTime) OR ' +
+              '(:startDateTime > r.start AND :startDateTime < r.end AND :endDateTime > r.start AND :endDateTime < r.end) OR ' +
+              '(r.start = :startDateTime AND r.end = :endDateTime))',
           )
           .getQuery();
         return `NOT EXISTS (${subQuery})`;
@@ -265,7 +268,10 @@ export class SpotService {
           .from('reservation', 'r')
           .where('r.spot_id = spot.id')
           .andWhere(
-            '(r.start BETWEEN :startDateTime AND :endDateTime OR r.end BETWEEN :startDateTime AND :endDateTime OR (r.start = :startDateTime AND r.end = :endDateTime))',
+            '((r.start > :startDateTime AND r.start < :endDateTime) OR ' +
+              '(r.end > :startDateTime AND r.end < :endDateTime) OR ' +
+              '(:startDateTime > r.start AND :startDateTime < r.end AND :endDateTime > r.start AND :endDateTime < r.end) OR ' +
+              '(r.start = :startDateTime AND r.end = :endDateTime))',
           )
           .getQuery();
         return `NOT EXISTS (${subQuery})`;
