@@ -4,6 +4,7 @@ import { User } from 'src/user/entities/user.entity';
 import { UserRoles } from 'src/user/user-role.enum';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 const scrypt = promisify(_scrypt);
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config();
 
 export class SeedUserAdmin1709217680080 implements MigrationInterface {
@@ -26,5 +27,6 @@ export class SeedUserAdmin1709217680080 implements MigrationInterface {
     await queryRunner.connection.getRepository(User).save(userAdmin);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public async down(queryRunner: QueryRunner): Promise<void> {}
 }

@@ -12,5 +12,6 @@ export class AddColumnToUserTable1708502432428 implements MigrationInterface {
     ]);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public async down(queryRunner: QueryRunner): Promise<void> {}
 }
