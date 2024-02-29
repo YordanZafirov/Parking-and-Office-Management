@@ -7,5 +7,6 @@ export class SeedLocation1709220178964 implements MigrationInterface {
     await queryRunner.connection.getRepository(Location).save(LocationSeed);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public async down(queryRunner: QueryRunner): Promise<void> {}
 }

@@ -7,5 +7,6 @@ export class SeedSpotTypes1709219992400 implements MigrationInterface {
     await queryRunner.connection.getRepository(SpotType).save(SpotTypesSeed);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public async down(queryRunner: QueryRunner): Promise<void> {}
 }
