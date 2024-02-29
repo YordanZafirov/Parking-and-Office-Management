@@ -46,8 +46,6 @@ export class SpotService {
       where: { floorPlanId: floorPlanId },
     });
 
-    console.log(spots);
-
     return spots;
   }
 
@@ -71,8 +69,6 @@ export class SpotService {
       })
       .andWhere('spot.spot_type_id = :spotTypeId', { spotTypeId })
       .getMany();
-
-    console.log(spots);
 
     return spots;
   }
@@ -202,7 +198,6 @@ export class SpotService {
           spot: currentSpotWithDates[0].spot,
         });
       }
-      console.log(daysWithFreeSpot);
     }
     if (
       spotType.name === 'Phone booth' ||
@@ -236,8 +231,6 @@ export class SpotService {
       })
       .andWhere('spot.spot_type_id = :spotTypeId', { spotTypeId })
       .getCount();
-
-    console.log(count);
 
     return count;
   }
@@ -283,7 +276,6 @@ export class SpotService {
       .andWhere('spot.is_permanent = false')
       .getCount();
 
-    console.log(freeSpotsCount);
     return freeSpotsCount;
   }
 
@@ -305,7 +297,6 @@ export class SpotService {
     );
 
     const percentage = ((allSpots - freeSpots) / allSpots) * 100;
-    console.log({ percentage });
     return percentage;
   }
 

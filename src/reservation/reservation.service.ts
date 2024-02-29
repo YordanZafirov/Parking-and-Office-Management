@@ -158,7 +158,6 @@ export class ReservationService {
       await this.checkIfSpotIsPermanent(dtoSpot);
 
       const existingSpotReservations = await this.findAllBySpotId(dtoRe.spotId);
-      console.log(existingSpotReservations);
       await this.checkIfSpotHasReservation(dtoRe, existingSpotReservations);
 
       const existingUserReservations =
