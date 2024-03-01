@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsUUID } from 'class-validator';
-import { IsYaraEmail } from 'src/utils/decorators/user-data/email.decorator';
-import { IsUnique } from 'src/utils/decorators/unique/unique.decorator';
-import { IsStrongPassword } from 'src/utils/decorators/user-data/password.decorator';
+import { IsYaraEmail } from '../../utils/decorators/user-data/email.decorator';
+import { IsUnique } from '../../utils/decorators/unique/unique.decorator';
+import { IsStrongPassword } from '../../utils/decorators/user-data/password.decorator';
 
 export class CreateUserDto {
   @IsYaraEmail()

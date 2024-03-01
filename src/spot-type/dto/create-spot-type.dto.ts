@@ -5,7 +5,7 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { IsUnique } from 'src/utils/decorators/unique/unique.decorator';
+import { IsUnique } from '../../utils/decorators/unique/unique.decorator';
 
 export class CreateSpotTypeDto {
   @IsNotEmpty()

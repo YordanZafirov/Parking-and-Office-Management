@@ -9,9 +9,9 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { SpotTypeService } from './spot-type.service';
-import { RolesGuard } from 'src/utils/guards/roles.guard';
-import { UserRoles } from 'src/user/user-role.enum';
-import { Roles } from 'src/utils/decorators/role/roles.decorator';
+import { RolesGuard } from '../utils/guards/roles.guard';
+import { UserRoles } from '../user/user-role.enum';
+import { Roles } from '../utils/decorators/role/roles.decorator';
 import { CreateSpotTypeDto } from './dto/create-spot-type.dto';
 
 @UseGuards(RolesGuard)

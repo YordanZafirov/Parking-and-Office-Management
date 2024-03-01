@@ -1,4 +1,4 @@
-import { SpotType } from 'src/spot-type/entities/spot-type.entity';
+import { SpotType } from '../../spot-type/entities/spot-type.entity';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import { SpotTypesSeed } from '../seeds/spot-types.seed';
 

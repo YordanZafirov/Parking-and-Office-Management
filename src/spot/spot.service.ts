@@ -3,14 +3,14 @@ import { UpdateSpotDto } from './dto/update-spot.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Spot } from './entities/spot.entity';
 import { Repository } from 'typeorm';
-import { UserService } from 'src/user/user.service';
+import { UserService } from '../user/user.service';
 import { CreateSpotsDto } from './dto/create-multiple-spots.dto';
-import { Reservation } from 'src/reservation/entities/reservation.entity';
-import { FloorPlan } from 'src/floor-plan/entities/floor_plan.entity';
+import { Reservation } from '../reservation/entities/reservation.entity';
+import { FloorPlan } from '../floor-plan/entities/floor_plan.entity';
 import { CreateSpotDto } from './dto/create-spot.dto';
-import { LocationService } from 'src/location/location.service';
-import { FloorPlanService } from 'src/floor-plan/floor_plan.service';
-import { SpotTypeService } from 'src/spot-type/spot-type.service';
+import { LocationService } from '../location/location.service';
+import { FloorPlanService } from '../floor-plan/floor_plan.service';
+import { SpotTypeService } from '../spot-type/spot-type.service';
 
 @Injectable()
 export class SpotService {

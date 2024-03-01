@@ -3,10 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { SpotType } from './entities/spot-type.entity';
 import { Repository } from 'typeorm';
 import { CreateSpotTypeDto } from './dto/create-spot-type.dto';
-import { UserService } from 'src/user/user.service';
-import { LocationService } from 'src/location/location.service';
-import { FloorPlan } from 'src/floor-plan/entities/floor_plan.entity';
-import { Spot } from 'src/spot/entities/spot.entity';
+import { UserService } from '../user/user.service';
+import { LocationService } from '../location/location.service';
+import { FloorPlan } from '../floor-plan/entities/floor_plan.entity';
+import { Spot } from '../spot/entities/spot.entity';
 
 @Injectable()
 export class SpotTypeService {
