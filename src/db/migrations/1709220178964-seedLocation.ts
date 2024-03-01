@@ -1,6 +1,6 @@
-import { LocationSeed } from 'db/seeds/location.seed';
 import { Location } from 'src/location/entities/location.entity';
 import { MigrationInterface, QueryRunner } from 'typeorm';
+import { LocationSeed } from '../seeds/location.seed';
 
 export class SeedLocation1709220178964 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
