@@ -131,7 +131,7 @@ export class SpotService {
         );
       }
       let counter = 0;
-      while (currentDate.getTime() <= endDate.getTime()) {
+      while (currentDate.getTime() < endDate.getTime()) {
         counter++;
         const endDateForDay = new Date(currentDate);
         endDateForDay.setDate(endDateForDay.getDate() + 1);
