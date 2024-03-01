@@ -3,10 +3,10 @@ import { SpotService } from './spot.service';
 import { SpotController } from './spot.controller';
 import { Spot } from './entities/spot.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserModule } from 'src/user/user.module';
-import { LocationModule } from 'src/location/location.module';
-import { SpotTypeModule } from 'src/spot-type/spot-type.module';
-import { FloorPlanModule } from 'src/floor-plan/floor_plan.module';
+import { UserModule } from '../user/user.module';
+import { LocationModule } from '../location/location.module';
+import { SpotTypeModule } from '../spot-type/spot-type.module';
+import { FloorPlanModule } from '../floor-plan/floor_plan.module';
 
 @Module({
   imports: [

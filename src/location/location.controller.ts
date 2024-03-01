@@ -12,9 +12,9 @@ import {
 import { LocationService } from './location.service';
 import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
-import { UserRoles } from 'src/user/user-role.enum';
-import { Roles } from 'src/utils/decorators/role/roles.decorator';
-import { RolesGuard } from 'src/utils/guards/roles.guard';
+import { UserRoles } from '../user/user-role.enum';
+import { Roles } from '../utils/decorators/role/roles.decorator';
+import { RolesGuard } from '../utils/guards/roles.guard';
 
 @UseGuards(RolesGuard)
 @Controller('location')

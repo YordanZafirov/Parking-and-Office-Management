@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { ReservationService } from './reservation.service';
 // import { CreateReservationDto } from './dto/create-reservation.dto';
-import { RolesGuard } from 'src/utils/guards/roles.guard';
+import { RolesGuard } from '../utils/guards/roles.guard';
 import { Reservation } from './entities/reservation.entity';
 import { CreateReservationsDto } from './dto/create-multiple-reservations.dto';
 import { CreateReservationDto } from './dto/create-reservation.dto';

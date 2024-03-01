@@ -12,9 +12,9 @@ import {
 } from '@nestjs/common';
 import { SpotService } from './spot.service';
 import { UpdateSpotDto } from './dto/update-spot.dto';
-import { RolesGuard } from 'src/utils/guards/roles.guard';
-import { Roles } from 'src/utils/decorators/role/roles.decorator';
-import { UserRoles } from 'src/user/user-role.enum';
+import { RolesGuard } from '../utils/guards/roles.guard';
+import { Roles } from '../utils/decorators/role/roles.decorator';
+import { UserRoles } from '../user/user-role.enum';
 import { CreateSpotsDto } from './dto/create-multiple-spots.dto';
 import { CreateSpotDto } from './dto/create-spot.dto';
 

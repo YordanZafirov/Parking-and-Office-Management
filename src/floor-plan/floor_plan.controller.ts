@@ -13,9 +13,9 @@ import {
 import { FloorPlanService } from './floor_plan.service';
 import { CreateFloorPlanDto } from './dto/create-floor_plan.dto';
 import { UpdateFloorPlanDto } from './dto/update-floor_plan.dto';
-import { RolesGuard } from 'src/utils/guards/roles.guard';
-import { Roles } from 'src/utils/decorators/role/roles.decorator';
-import { UserRoles } from 'src/user/user-role.enum';
+import { RolesGuard } from '../utils/guards/roles.guard';
+import { Roles } from '../utils/decorators/role/roles.decorator';
+import { UserRoles } from '../user/user-role.enum';
 
 @Controller('floor-plan')
 @UseGuards(RolesGuard)

@@ -8,12 +8,12 @@ import { UpdateFloorPlanDto } from './dto/update-floor_plan.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FloorPlan } from './entities/floor_plan.entity';
 import { Not, Repository } from 'typeorm';
-import { UserService } from 'src/user/user.service';
-import { SpotTypeService } from 'src/spot-type/spot-type.service';
-import { Spot } from 'src/spot/entities/spot.entity';
-import { SpotType } from 'src/spot-type/entities/spot-type.entity';
-import { LocationService } from 'src/location/location.service';
-import { Location } from 'src/location/entities/location.entity';
+import { UserService } from '../user/user.service';
+import { SpotTypeService } from '../spot-type/spot-type.service';
+import { Spot } from '../spot/entities/spot.entity';
+import { SpotType } from '../spot-type/entities/spot-type.entity';
+import { LocationService } from '../location/location.service';
+import { Location } from '../location/entities/location.entity';
 
 @Injectable()
 export class FloorPlanService {

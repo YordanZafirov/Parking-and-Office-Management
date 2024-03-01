@@ -1,7 +1,7 @@
 import { randomBytes, scrypt as _scrypt } from 'crypto';
 import { promisify } from 'node:util';
-import { User } from 'src/user/entities/user.entity';
-import { UserRoles } from 'src/user/user-role.enum';
+import { User } from '../../user/entities/user.entity';
+import { UserRoles } from '../../user/user-role.enum';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 const scrypt = promisify(_scrypt);
 // eslint-disable-next-line @typescript-eslint/no-var-requires
