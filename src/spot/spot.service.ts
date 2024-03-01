@@ -97,7 +97,8 @@ export class SpotService {
             '((r.start > :startDateTime AND r.start < :endDateTime) OR ' +
               '(r.end > :startDateTime AND r.end < :endDateTime) OR ' +
               '(:startDateTime > r.start AND :startDateTime < r.end AND :endDateTime > r.start AND :endDateTime < r.end) OR ' +
-              '(r.start = :startDateTime AND r.end = :endDateTime))',
+              '(r.start = :startDateTime) OR ' +
+              '(r.end = :endDateTime))',
           )
           .getQuery();
         return `NOT EXISTS (${subQuery})`;
@@ -235,7 +236,8 @@ export class SpotService {
             '((r.start > :startDateTime AND r.start < :endDateTime) OR ' +
               '(r.end > :startDateTime AND r.end < :endDateTime) OR ' +
               '(:startDateTime > r.start AND :startDateTime < r.end AND :endDateTime > r.start AND :endDateTime < r.end) OR ' +
-              '(r.start = :startDateTime AND r.end = :endDateTime))',
+              '(r.start = :startDateTime) OR ' +
+              '(r.end = :endDateTime))',
           )
           .getQuery();
         return `NOT EXISTS (${subQuery})`;
