@@ -6,7 +6,6 @@ export type IsUniqueConstraintInput = {
   column: string;
 };
 
-// decorator function
 export function IsUnique(
   options: IsUniqueConstraintInput,
   validationOptions?: ValidationOptions,

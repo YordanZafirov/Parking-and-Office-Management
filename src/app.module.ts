@@ -3,13 +3,18 @@ import { UniqueModule } from './utils/decorators/unique/unique.module';
 import { IsUniqueConstraint } from './utils/decorators/unique/validator';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { GlobalExceptionFilter } from './utils/filters/GlobalExceptionFilter';
-import { dataSourceOptions } from 'db/data-source';
+import { dataSourceOptions } from 'src/db/data-source';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthGuard } from './utils/guards/auth.guard';
 import { AuthModule } from './auth/auth.module';
 import { SpotTypeModule } from './spot-type/spot-type.module';
-import { SchemaTypeModule } from './schema-type/schema-type.module';
+import { UserModule } from './user/user.module';
+import { AwsModule } from './aws/aws.module';
+import { SpotModule } from './spot/spot.module';
+import { FloorPlanModule } from './floor-plan/floor_plan.module';
+import { LocationModule } from './location/location.module';
+import { ReservationModule } from './reservation/reservation.module';
 
 @Module({
   imports: [
@@ -18,7 +23,12 @@ import { SchemaTypeModule } from './schema-type/schema-type.module';
     UniqueModule,
     AuthModule,
     SpotTypeModule,
-    SchemaTypeModule,
+    UserModule,
+    AwsModule,
+    SpotModule,
+    FloorPlanModule,
+    LocationModule,
+    ReservationModule,
   ],
   controllers: [],
   providers: [

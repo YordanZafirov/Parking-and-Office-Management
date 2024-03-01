@@ -1,7 +1,7 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { ROLES_KEY } from 'src/user/roles.decorator';
 import { UserRoles } from 'src/user/user-role.enum';
+import { ROLES_KEY } from '../decorators/role/roles.decorator';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -13,7 +13,7 @@ export class RolesGuard implements CanActivate {
       context.getHandler(),
     );
     if (isPublic) {
-      return true; // Skip authentication for public routes
+      return true;
     }
 
     const requiredRoles = this.reflector.getAllAndOverride<UserRoles[]>(
