@@ -10,8 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { LocationService } from './location.service';
-import { CreateLocationDto } from './dto/create-location.dto';
-import { UpdateLocationDto } from './dto/update-location.dto';
+import { CreateLocationDto, UpdateLocationDto } from './location.dto';
 import { UserRoles } from '../user/user-role.enum';
 import { Roles } from '../utils/decorators/role/roles.decorator';
 import { RolesGuard } from '../utils/guards/roles.guard';
