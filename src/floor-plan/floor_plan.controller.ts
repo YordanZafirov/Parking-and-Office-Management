@@ -11,8 +11,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { FloorPlanService } from './floor_plan.service';
-import { CreateFloorPlanDto } from './dto/create-floor_plan.dto';
-import { UpdateFloorPlanDto } from './dto/update-floor_plan.dto';
+import { CreateFloorPlanDto, UpdateFloorPlanDto } from './floor-plan.dto';
 import { RolesGuard } from '../utils/guards/roles.guard';
 import { Roles } from '../utils/decorators/role/roles.decorator';
 import { UserRoles } from '../user/user-role.enum';
