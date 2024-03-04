@@ -6,7 +6,7 @@ import { CreateSpotTypeDto } from './dto/create-spot-type.dto';
 import { UserService } from '../user/user.service';
 import { LocationService } from '../location/location.service';
 import { FloorPlan } from '../floor-plan/floor_plan.entity';
-import { Spot } from '../spot/entities/spot.entity';
+import { Spot } from '../spot/spot.entity';
 
 @Injectable()
 export class SpotTypeService {

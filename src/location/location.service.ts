@@ -3,14 +3,10 @@ import { CreateLocationDto, UpdateLocationDto } from './location.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Location } from './location.entity';
-import { UserService } from '../user/user.service';
 
 @Injectable()
 export class LocationService {
-  constructor(
-    @InjectRepository(Location) private repo: Repository<Location>,
-    private readonly userService: UserService,
-  ) {}
+  constructor(@InjectRepository(Location) private repo: Repository<Location>) {}
 
   async findAll() {
     const locations = await this.repo.find();

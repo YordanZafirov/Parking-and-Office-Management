@@ -7,7 +7,7 @@ import { CreateFloorPlanDto, UpdateFloorPlanDto } from './floor-plan.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FloorPlan } from './floor_plan.entity';
 import { Not, Repository } from 'typeorm';
-import { Spot } from '../spot/entities/spot.entity';
+import { Spot } from '../spot/spot.entity';
 import { SpotType } from '../spot-type/entities/spot-type.entity';
 import { Location } from '../location/location.entity';
 

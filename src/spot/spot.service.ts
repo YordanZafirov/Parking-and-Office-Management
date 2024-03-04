@@ -1,15 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { UpdateSpotDto } from './dto/update-spot.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Spot } from './entities/spot.entity';
+import { Spot } from './spot.entity';
 import { Repository } from 'typeorm';
-import { UserService } from '../user/user.service';
-import { CreateSpotsDto } from './dto/create-multiple-spots.dto';
 import { Reservation } from '../reservation/reservation.entity';
 import { FloorPlan } from '../floor-plan/floor_plan.entity';
-import { CreateSpotDto } from './dto/create-spot.dto';
-import { LocationService } from '../location/location.service';
-import { FloorPlanService } from '../floor-plan/floor_plan.service';
+import { CreateSpotDto, CreateSpotsDto, UpdateSpotDto } from './spot.dto';
 import { SpotTypeService } from '../spot-type/spot-type.service';
 
 @Injectable()
@@ -17,10 +12,7 @@ export class SpotService {
   constructor(
     @InjectRepository(Spot)
     private readonly spotRepository: Repository<Spot>,
-    private readonly userService: UserService,
     private spotTypeService: SpotTypeService,
-    private locationService: LocationService,
-    private floorPlanService: FloorPlanService,
   ) {}
 
   async findAll() {
@@ -29,9 +21,6 @@ export class SpotService {
   }
 
   async findOne(id: string) {
-    if (!id) {
-      return null;
-    }
     const spot = await this.spotRepository.findOneBy({ id });
     if (!spot) {
       throw new NotFoundException('Spot not found');
@@ -40,8 +29,6 @@ export class SpotService {
   }
 
   async findAllSpotsByFloorPlanId(floorPlanId: string) {
-    await this.floorPlanService.findOneById(floorPlanId);
-
     const spots = await this.spotRepository.find({
       where: { floorPlanId: floorPlanId },
     });
@@ -53,9 +40,6 @@ export class SpotService {
     locationId: string,
     spotTypeId: string,
   ) {
-    await this.locationService.findOne(locationId);
-    await this.spotTypeService.findOne(spotTypeId);
-
     const spots = await this.spotRepository
       .createQueryBuilder('spot')
       .leftJoinAndSelect(
@@ -77,9 +61,6 @@ export class SpotService {
     floorPlanId: string,
     spotTypeId: string,
   ) {
-    await this.floorPlanService.findOneById(floorPlanId);
-    await this.spotTypeService.findOne(spotTypeId);
-
     const spots = await this.spotRepository
       .createQueryBuilder('spot')
       .select('spot')
@@ -96,9 +77,6 @@ export class SpotService {
     startDateTime: Date,
     endDateTime: Date,
   ) {
-    await this.floorPlanService.findOneById(floorPlanId);
-    await this.spotTypeService.findOne(spotTypeId);
-
     const spots = await this.spotRepository
       .createQueryBuilder('spot')
       .leftJoinAndSelect(
@@ -139,7 +117,6 @@ export class SpotService {
     startDateTime: Date,
     endDateTime: Date,
   ) {
-    await this.floorPlanService.findOneById(floorPlanId);
     const spotType = await this.spotTypeService.findOne(spotTypeId);
     const daysWithFreeSpot = [];
     const currentSpotWithDates = [];
@@ -215,9 +192,6 @@ export class SpotService {
     locationId: string,
     spotTypeId: string,
   ) {
-    await this.locationService.findOne(locationId);
-    await this.spotTypeService.findOne(spotTypeId);
-
     const count = await this.spotRepository
       .createQueryBuilder('spot')
       .leftJoinAndSelect(
@@ -241,9 +215,6 @@ export class SpotService {
     startDateTime: Date,
     endDateTime: Date,
   ) {
-    await this.locationService.findOne(locationId);
-    await this.spotTypeService.findOne(spotTypeId);
-
     const freeSpotsCount = await this.spotRepository
       .createQueryBuilder('spot')
       .leftJoinAndSelect(
@@ -302,8 +273,6 @@ export class SpotService {
 
   async createMultiple(createSpotsDto: CreateSpotsDto) {
     const spots = [];
-    const { modifiedBy } = createSpotsDto.markers[0];
-    await this.userService.findOneById(modifiedBy);
     for (const sp of createSpotsDto.markers) {
       const spot = this.spotRepository.create(sp);
 
@@ -314,7 +283,6 @@ export class SpotService {
   }
 
   async update(id: string, updateSpotDto: UpdateSpotDto) {
-    await this.userService.findOneById(updateSpotDto.modifiedBy);
     const spot = await this.findOne(id);
     Object.assign(spot, updateSpotDto);
     const updatedSpot = await this.spotRepository.save(spot);
@@ -333,11 +301,7 @@ export class SpotService {
   }
 
   async checkSpot(createSpotDto: CreateSpotDto) {
-    const { modifiedBy } = createSpotDto;
-
-    await this.userService.findOneById(modifiedBy);
     const spot = this.spotRepository.create(createSpotDto);
-
     return spot;
   }
 }
