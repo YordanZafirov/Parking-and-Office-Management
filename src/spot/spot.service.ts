@@ -5,7 +5,7 @@ import { Spot } from './entities/spot.entity';
 import { Repository } from 'typeorm';
 import { UserService } from '../user/user.service';
 import { CreateSpotsDto } from './dto/create-multiple-spots.dto';
-import { Reservation } from '../reservation/entities/reservation.entity';
+import { Reservation } from '../reservation/reservation.entity';
 import { FloorPlan } from '../floor-plan/floor_plan.entity';
 import { CreateSpotDto } from './dto/create-spot.dto';
 import { LocationService } from '../location/location.service';
