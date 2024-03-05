@@ -12,7 +12,7 @@ import { SpotTypeService } from './spot-type.service';
 import { RolesGuard } from '../utils/guards/roles.guard';
 import { UserRoles } from '../user/user-role.enum';
 import { Roles } from '../utils/decorators/role/roles.decorator';
-import { CreateSpotTypeDto } from './dto/create-spot-type.dto';
+import { CreateSpotTypeDto } from './spot-type.dto';
 
 @UseGuards(RolesGuard)
 @Controller('spot-type')
