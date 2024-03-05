@@ -1,4 +1,4 @@
-import { FloorPlanService } from './../floor-plan/floor_plan.service';
+import { FloorPlanService } from '../floor-plan/floor-plan.service';
 import { SpotService } from './../spot/spot.service';
 import {
   BadRequestException,

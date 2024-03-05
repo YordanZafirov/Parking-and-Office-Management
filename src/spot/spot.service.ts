@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Spot } from './spot.entity';
 import { Repository } from 'typeorm';
 import { Reservation } from '../reservation/reservation.entity';
-import { FloorPlan } from '../floor-plan/floor_plan.entity';
+import { FloorPlan } from '../floor-plan/floor-plan.entity';
 import { CreateSpotDto, CreateSpotsDto, UpdateSpotDto } from './spot.dto';
 import { SpotTypeService } from '../spot-type/spot-type.service';
 

@@ -10,7 +10,7 @@ import {
   ParseUUIDPipe,
   Query,
 } from '@nestjs/common';
-import { FloorPlanService } from './floor_plan.service';
+import { FloorPlanService } from './floor-plan.service';
 import { CreateFloorPlanDto, UpdateFloorPlanDto } from './floor-plan.dto';
 import { RolesGuard } from '../utils/guards/roles.guard';
 import { Roles } from '../utils/decorators/role/roles.decorator';
