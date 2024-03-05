@@ -2,7 +2,7 @@ import { OmitType, PartialType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
 import { IsArray, ValidateNested } from 'class-validator';
 import { IsNotEmpty, IsString, IsUUID, Length } from 'class-validator';
-import { IsUnique } from '../../utils/decorators/unique/unique.decorator';
+import { IsUnique } from '../utils/decorators/unique/unique.decorator';
 
 class CreateSpotDto {
   @IsString()
