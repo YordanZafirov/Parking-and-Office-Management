@@ -1,29 +1,17 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { SpotType } from './entities/spot-type.entity';
+import { SpotType } from './spot-type.entity';
 import { Repository } from 'typeorm';
-import { CreateSpotTypeDto } from './dto/create-spot-type.dto';
-import { UserService } from '../user/user.service';
-import { LocationService } from '../location/location.service';
 import { FloorPlan } from '../floor-plan/floor-plan.entity';
 import { Spot } from '../spot/spot.entity';
+import { CreateSpotTypeDto } from './spot-type.dto';
 
 @Injectable()
 export class SpotTypeService {
-  constructor(
-    @InjectRepository(SpotType) private repo: Repository<SpotType>,
-    private readonly userService: UserService,
-    private readonly locationService: LocationService,
-  ) {}
+  constructor(@InjectRepository(SpotType) private repo: Repository<SpotType>) {}
 
   async findAll() {
     const spotType = await this.repo.find();
-    if (!spotType) {
-      throw new NotFoundException(
-        `There are no spot type records in the database`,
-      );
-    }
-
     return spotType;
   }
 
@@ -36,8 +24,6 @@ export class SpotTypeService {
   }
 
   async findAllByLocationId(id: string) {
-    const location = await this.locationService.findOne(id);
-
     const getAllByLocation = this.repo
       .createQueryBuilder('spotType')
       .leftJoinAndSelect(Spot, 'spot', 'spot.spotTypeId = spotType.id')
@@ -47,21 +33,15 @@ export class SpotTypeService {
         'spot.floorPlanId = floorPlan.id',
       )
       .select('spotType', 'spot')
-      .where('floorPlan.locationId = :locationId', { locationId: location.id })
+      .where('floorPlan.locationId = :locationId', { locationId: id })
       .getMany();
 
     return getAllByLocation;
   }
 
   async create(createSpotTypeDto: CreateSpotTypeDto) {
-    const user = await this.userService.findOneById(
-      createSpotTypeDto.modifiedBy,
-    );
+    const spotType = this.repo.create(createSpotTypeDto);
 
-    if (user) {
-      const spotType = this.repo.create(createSpotTypeDto);
-
-      return await this.repo.save(spotType);
-    }
+    return await this.repo.save(spotType);
   }
 }

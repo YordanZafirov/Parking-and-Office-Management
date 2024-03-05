@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FloorPlan } from './floor-plan.entity';
 import { Not, Repository } from 'typeorm';
 import { Spot } from '../spot/spot.entity';
-import { SpotType } from '../spot-type/entities/spot-type.entity';
+import { SpotType } from '../spot-type/spot-type.entity';
 import { Location } from '../location/location.entity';
 
 @Injectable()
