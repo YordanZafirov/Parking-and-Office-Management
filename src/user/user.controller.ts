@@ -10,15 +10,17 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
+import {
+  CreateUserDto,
+  SignInDto,
+  UpdatePasswordDto,
+  UpdateProfilePictureDto,
+} from './user.dto';
 import { AuthService } from '../auth/auth.service';
 import { Public } from '../utils/decorators/public/public.decorator';
 import { UserRoles } from './user-role.enum';
-import { SignInDto } from './dto/sign-in.dto';
 import { Roles } from '../utils/decorators/role/roles.decorator';
-import { UpdatePasswordDto } from './dto/update-password.dto';
 import { RolesGuard } from '../utils/guards/roles.guard';
-import { UpdateProfilePictureDto } from './dto/update-profile-picture.dto';
 
 @Controller('user')
 @UseGuards(RolesGuard)

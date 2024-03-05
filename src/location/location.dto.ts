@@ -1,3 +1,4 @@
+import { PartialType } from '@nestjs/mapped-types';
 import {
   IsNotEmpty,
   IsString,
@@ -7,7 +8,7 @@ import {
 } from 'class-validator';
 import { IsUnique } from '../../utils/decorators/unique/unique.decorator';
 
-export class CreateLocationDto {
+class CreateLocationDto {
   @IsNotEmpty()
   @IsUnique({ tableName: 'location', column: 'name' })
   @IsString({ message: 'Name must be a string' })
@@ -47,3 +48,7 @@ export class CreateLocationDto {
   @IsUUID()
   modifiedBy: string;
 }
+
+class UpdateLocationDto extends PartialType(CreateLocationDto) {}
+
+export { CreateLocationDto, UpdateLocationDto };

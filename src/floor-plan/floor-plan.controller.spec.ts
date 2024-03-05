@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { FloorPlanController } from './floor_plan.controller';
-import { FloorPlanService } from './floor_plan.service';
+import { FloorPlanController } from './floor-plan.controller';
+import { FloorPlanService } from './floor-plan.service';
 
 describe('FloorPlanController', () => {
   let controller: FloorPlanController;

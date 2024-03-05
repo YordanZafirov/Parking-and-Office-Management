@@ -1,24 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateLocationDto } from './dto/create-location.dto';
-import { UpdateLocationDto } from './dto/update-location.dto';
+import { CreateLocationDto, UpdateLocationDto } from './location.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Location } from './entities/location.entity';
-import { UserService } from '../user/user.service';
+import { Location } from './location.entity';
 
 @Injectable()
 export class LocationService {
-  constructor(
-    @InjectRepository(Location) private repo: Repository<Location>,
-    private readonly userService: UserService,
-  ) {}
+  constructor(@InjectRepository(Location) private repo: Repository<Location>) {}
 
   async findAll() {
     const locations = await this.repo.find();
-    if (!locations) {
-      throw new NotFoundException(`There are no locations in the database`);
-    }
-
     return locations;
   }
 
@@ -31,26 +22,14 @@ export class LocationService {
   }
 
   async create(createLocationDto: CreateLocationDto) {
-    const user = await this.userService.findOneById(
-      createLocationDto.modifiedBy,
-    );
-
-    if (user) {
-      const location = this.repo.create(createLocationDto);
-      return await this.repo.save(location);
-    }
+    const location = this.repo.create(createLocationDto);
+    return await this.repo.save(location);
   }
 
   async update(id: string, updateLocationDto: UpdateLocationDto) {
-    const user = await this.userService.findOneById(
-      updateLocationDto.modifiedBy,
-    );
-
-    if (user) {
-      const location = await this.findOne(id);
-      Object.assign(location, updateLocationDto);
-      return await this.repo.save(location);
-    }
+    const location = await this.findOne(id);
+    Object.assign(location, updateLocationDto);
+    return await this.repo.save(location);
   }
 
   async delete(id: string) {

@@ -9,11 +9,9 @@ import {
   ParseUUIDPipe,
 } from '@nestjs/common';
 import { ReservationService } from './reservation.service';
-// import { CreateReservationDto } from './dto/create-reservation.dto';
 import { RolesGuard } from '../utils/guards/roles.guard';
-import { Reservation } from './entities/reservation.entity';
-import { CreateReservationsDto } from './dto/create-multiple-reservations.dto';
-import { CreateReservationDto } from './dto/create-reservation.dto';
+import { Reservation } from './reservation.entity';
+import { CreateReservationDto, CreateReservationsDto } from './reservation.dto';
 
 @Controller('reservation')
 @UseGuards(RolesGuard)

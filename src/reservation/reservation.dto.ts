@@ -1,6 +1,8 @@
 import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsArray, ValidateNested } from 'class-validator';
 
-export class CreateReservationDto {
+class CreateReservationDto {
   @IsNotEmpty({ message: 'Start date cannot be empty' })
   start: Date;
 
@@ -22,3 +24,12 @@ export class CreateReservationDto {
   @IsUUID()
   modifiedBy: string;
 }
+
+class CreateReservationsDto {
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateReservationDto)
+  reservations: CreateReservationDto[];
+}
+
+export { CreateReservationDto, CreateReservationsDto };

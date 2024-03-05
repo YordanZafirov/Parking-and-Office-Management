@@ -3,33 +3,23 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateFloorPlanDto } from './dto/create-floor_plan.dto';
-import { UpdateFloorPlanDto } from './dto/update-floor_plan.dto';
+import { CreateFloorPlanDto, UpdateFloorPlanDto } from './floor-plan.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FloorPlan } from './entities/floor_plan.entity';
+import { FloorPlan } from './floor-plan.entity';
 import { Not, Repository } from 'typeorm';
-import { UserService } from '../user/user.service';
-import { SpotTypeService } from '../spot-type/spot-type.service';
-import { Spot } from '../spot/entities/spot.entity';
+import { Spot } from '../spot/spot.entity';
 import { SpotType } from '../spot-type/entities/spot-type.entity';
-import { LocationService } from '../location/location.service';
-import { Location } from '../location/entities/location.entity';
+import { Location } from '../location/location.entity';
 
 @Injectable()
 export class FloorPlanService {
   constructor(
     @InjectRepository(FloorPlan)
     private floorPlanRepository: Repository<FloorPlan>,
-    private userService: UserService,
-    private spotTypeService: SpotTypeService,
-    private locationService: LocationService,
   ) {}
 
   async findAll() {
     const floorPlans = await this.floorPlanRepository.find();
-    if (!floorPlans) {
-      throw new NotFoundException(`No floor plan found`);
-    }
     return floorPlans;
   }
 
@@ -42,8 +32,6 @@ export class FloorPlanService {
   }
 
   async findAllBySpotTypeAndLocationId(spotTypeId: string, locationId: string) {
-    const spotType = await this.spotTypeService.findOne(spotTypeId);
-    const location = await this.locationService.findOne(locationId);
     const getAllBySpotType = this.floorPlanRepository
       .createQueryBuilder('floorPlan')
       .leftJoinAndSelect(
@@ -54,9 +42,9 @@ export class FloorPlanService {
       .leftJoinAndSelect(Spot, 'spot', 'spot.floorPlanId = floorPlan.id')
       .leftJoinAndSelect(SpotType, 'spotType', 'spot.spotTypeId = spotType.id')
       .select('floorPlan', 'spot')
-      .where('spot.spotTypeId = :spotTypeId', { spotTypeId: spotType.id })
+      .where('spot.spotTypeId = :spotTypeId', { spotTypeId: spotTypeId })
       .andWhere('floorPlan.locationId = :locationId', {
-        locationId: location.id,
+        locationId: locationId,
       })
       .getMany();
 
@@ -64,21 +52,11 @@ export class FloorPlanService {
   }
 
   async create(createFloorPlanDto: CreateFloorPlanDto): Promise<FloorPlan> {
-    const user = this.userService.findOneById(createFloorPlanDto.modifiedBy);
-    if (user) {
-      const { name, imgUrl, locationId, modifiedBy } = createFloorPlanDto;
+    const newFloorPlan = this.floorPlanRepository.create(createFloorPlanDto);
 
-      const newFloorPlan = this.floorPlanRepository.create({
-        name,
-        imgUrl,
-        locationId,
-        modifiedBy,
-      });
-
-      const newCreatedFloorPlan =
-        await this.floorPlanRepository.save(newFloorPlan);
-      return newCreatedFloorPlan;
-    }
+    const newCreatedFloorPlan =
+      await this.floorPlanRepository.save(newFloorPlan);
+    return newCreatedFloorPlan;
   }
 
   async update(
@@ -131,10 +109,6 @@ export class FloorPlanService {
     message: string;
   }> {
     const existingFloorPlan = await this.floorPlanRepository.findOneBy({ id });
-
-    if (!existingFloorPlan) {
-      throw new NotFoundException(`Floor Plan with id ${id} not found`);
-    }
 
     await this.floorPlanRepository.softDelete({ id });
 

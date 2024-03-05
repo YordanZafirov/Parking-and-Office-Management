@@ -1,7 +1,10 @@
+import { OmitType, PartialType } from '@nestjs/mapped-types';
+import { Type } from 'class-transformer';
+import { IsArray, ValidateNested } from 'class-validator';
 import { IsNotEmpty, IsString, IsUUID, Length } from 'class-validator';
 import { IsUnique } from '../../utils/decorators/unique/unique.decorator';
 
-export class CreateSpotDto {
+class CreateSpotDto {
   @IsString()
   @IsNotEmpty()
   @Length(2, 64)
@@ -31,3 +34,18 @@ export class CreateSpotDto {
   @IsNotEmpty()
   modifiedBy: string;
 }
+
+class CreateSpotsDto {
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateSpotDto)
+  markers: CreateSpotDto[];
+}
+
+class UpdateSpotDto extends PartialType(
+  OmitType(CreateSpotDto, ['floorPlanId'] as const),
+) {
+  isPermanent: boolean;
+}
+
+export { CreateSpotDto, CreateSpotsDto, UpdateSpotDto };
